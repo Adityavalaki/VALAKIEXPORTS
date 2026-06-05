@@ -78,7 +78,7 @@ export const products: Product[] = [
     id: 'onion-white-flakes',
     name: 'Dehydrated White Onion Flakes / Kibbled',
     category: 'dehydrated-onion',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-onion.svg',
     forms: ['Flakes (Kibbled)', 'Chopped', 'Minced', 'Granules', 'Powder'],
     specs: {
       'Moisture Content': 'Max 5.0%',
@@ -93,7 +93,7 @@ export const products: Product[] = [
     id: 'onion-red-flakes',
     name: 'Dehydrated Red Onion Flakes / Kibbled',
     category: 'dehydrated-onion',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-onion.svg',
     forms: ['Flakes (Kibbled)', 'Chopped', 'Minced', 'Granules', 'Powder'],
     specs: {
       'Moisture Content': 'Max 5.0%',
@@ -107,7 +107,7 @@ export const products: Product[] = [
     id: 'onion-pink-flakes',
     name: 'Dehydrated Pink Onion Flakes',
     category: 'dehydrated-onion',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-onion.svg',
     forms: ['Flakes', 'Granules', 'Powder'],
     specs: {
       'Moisture Content': 'Max 5.0%',
@@ -120,7 +120,7 @@ export const products: Product[] = [
     id: 'onion-fried',
     name: 'Crispy Fried Onions',
     category: 'dehydrated-onion',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-onion.svg',
     forms: ['Crispy Flakes'],
     specs: {
       'Moisture Content': 'Max 3.0%',
@@ -135,7 +135,7 @@ export const products: Product[] = [
     id: 'garlic-flakes',
     name: 'Dehydrated Garlic Flakes / Cloves',
     category: 'dehydrated-garlic',
-    image: '/images/products/dehydrated-garlic.png',
+    image: '/images/products/cat-dehydrated-garlic.svg',
     forms: ['Flakes', 'Minced', 'Granules', 'Powder'],
     specs: {
       'Moisture Content': 'Max 5.5%',
@@ -149,7 +149,7 @@ export const products: Product[] = [
     id: 'garlic-minced',
     name: 'Dehydrated Garlic Minced',
     category: 'dehydrated-garlic',
-    image: '/images/products/dehydrated-garlic.png',
+    image: '/images/products/cat-dehydrated-garlic.svg',
     forms: ['Minced (1-3mm)'],
     specs: {
       'Moisture Content': 'Max 5.0%',
@@ -162,7 +162,7 @@ export const products: Product[] = [
     id: 'garlic-powder',
     name: 'Dehydrated Garlic Powder',
     category: 'dehydrated-garlic',
-    image: '/images/products/dehydrated-garlic.png',
+    image: '/images/products/cat-dehydrated-garlic.svg',
     forms: ['Fine Powder (100 mesh)'],
     specs: {
       'Moisture Content': 'Max 5.0%',
@@ -177,7 +177,7 @@ export const products: Product[] = [
     id: 'turmeric-powder',
     name: 'Turmeric Powder (High Curcumin)',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Whole Fingers', 'Powder'],
     specs: {
       'Curcumin Content': '3.0% - 5.5% (High grade)',
@@ -190,7 +190,7 @@ export const products: Product[] = [
     id: 'cumin-seeds',
     name: 'Cumin Seeds & Ground Cumin',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Whole Seeds', 'Powder'],
     specs: {
       'Purity': '99% - 99.5% (Singapore/Europe Grade)',
@@ -203,7 +203,7 @@ export const products: Product[] = [
     id: 'coriander-seeds',
     name: 'Coriander Seeds & Ground Coriander',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Whole Badami/Eagle', 'Powder'],
     specs: {
       'Moisture': 'Max 9.0%',
@@ -216,7 +216,7 @@ export const products: Product[] = [
     id: 'ajwain-seeds',
     name: 'Ajwain (Carom) Seeds',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Whole Seeds'],
     specs: {
       'Purity': '99%',
@@ -229,7 +229,7 @@ export const products: Product[] = [
     id: 'fenugreek-seeds',
     name: 'Fenugreek Seeds',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Whole Seeds', 'Powder'],
     specs: {
       'Purity': '99%',
@@ -241,7 +241,7 @@ export const products: Product[] = [
     id: 'herb-thyme',
     name: 'Dry Thyme Leaves',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Whole Leaves', 'Powder'],
     specs: {
       'Moisture': 'Max 8.0%',
@@ -253,7 +253,7 @@ export const products: Product[] = [
     id: 'herb-parsley',
     name: 'Dry Parsley Leaves',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Rubbed Leaves'],
     specs: {
       'Moisture': 'Max 7.5%',
@@ -265,7 +265,7 @@ export const products: Product[] = [
     id: 'herb-basil',
     name: 'Dry Basil Leaves',
     category: 'spices-herbs',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-spices-herbs.svg',
     forms: ['Rubbed Leaves'],
     specs: {
       'Moisture': 'Max 8.0%',
@@ -279,7 +279,7 @@ export const products: Product[] = [
     id: 'chilli-flakes',
     name: 'Red Chilli Flakes (Pizza Cut)',
     category: 'chilli-products',
-    image: '/images/products/red-chilli.png',
+    image: '/images/products/cat-chilli-products.svg',
     forms: ['Coarse Flakes (with/without seeds)'],
     specs: {
       'Pungency': '15,000 to 40,000 SHU',
@@ -292,7 +292,7 @@ export const products: Product[] = [
     id: 'chilli-powder',
     name: 'Red Chilli Powder (Cayenne style)',
     category: 'chilli-products',
-    image: '/images/products/red-chilli.png',
+    image: '/images/products/cat-chilli-products.svg',
     forms: ['Fine Powder'],
     specs: {
       'Pungency': '20,000 to 80,000 SHU (Custom)',
@@ -305,7 +305,7 @@ export const products: Product[] = [
     id: 'chilli-whole',
     name: 'Whole Dry Red Chilli (Stem/Stemless)',
     category: 'chilli-products',
-    image: '/images/products/red-chilli.png',
+    image: '/images/products/cat-chilli-products.svg',
     forms: ['S17 Teja', 'Sanam (S4)', 'Byadgi (High Color)'],
     specs: {
       'Moisture': 'Max 10%',
@@ -319,7 +319,7 @@ export const products: Product[] = [
     id: 'veg-potato-flakes',
     name: 'Dehydrated Potato Flakes',
     category: 'dehydrated-veg-fruits',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-veg-fruits.svg',
     forms: ['Flakes'],
     specs: {
       'Moisture': 'Max 6.5%',
@@ -332,7 +332,7 @@ export const products: Product[] = [
     id: 'veg-beetroot-flakes',
     name: 'Dried Beetroot Flakes & Powder',
     category: 'dehydrated-veg-fruits',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-veg-fruits.svg',
     forms: ['Flakes', 'Powder'],
     specs: {
       'Moisture': 'Max 6.0%',
@@ -345,7 +345,7 @@ export const products: Product[] = [
     id: 'veg-spinach-leaves',
     name: 'Dehydrated Spinach Leaves & Powder',
     category: 'dehydrated-veg-fruits',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-veg-fruits.svg',
     forms: ['Flakes/Leaves', 'Powder'],
     specs: {
       'Moisture': 'Max 7.0%',
@@ -357,7 +357,7 @@ export const products: Product[] = [
     id: 'veg-moringa-leaves',
     name: 'Moringa (Superfood) Leaves & Powder',
     category: 'dehydrated-veg-fruits',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-veg-fruits.svg',
     forms: ['Whole Leaves', 'Fine Powder'],
     specs: {
       'Moisture': 'Max 8.0%',
@@ -370,7 +370,7 @@ export const products: Product[] = [
     id: 'fruit-mango-powder',
     name: 'Spray Dried Mango Powder',
     category: 'dehydrated-veg-fruits',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-veg-fruits.svg',
     forms: ['Free Flowing Powder'],
     specs: {
       'Solubility': 'Instant',
@@ -383,7 +383,7 @@ export const products: Product[] = [
     id: 'fruit-lemon-powder',
     name: 'Spray Dried Lemon Juice Powder',
     category: 'dehydrated-veg-fruits',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-dehydrated-veg-fruits.svg',
     forms: ['Free Flowing Powder'],
     specs: {
       'Acidity': 'High natural citric acid',
@@ -397,7 +397,7 @@ export const products: Product[] = [
     id: 'seed-sesame',
     name: 'Sesame Seeds (Natural & Hulled)',
     category: 'oil-seeds-cereals',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-oil-seeds-cereals.svg',
     forms: ['Natural White', 'Hulled Auto-dried', 'Black Sesame'],
     specs: {
       'Purity': '99.9% - 99.99% (Sortex Cleaned)',
@@ -410,7 +410,7 @@ export const products: Product[] = [
     id: 'seed-peanut',
     name: 'Groundnut / Peanuts (Bold & Java)',
     category: 'oil-seeds-cereals',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-oil-seeds-cereals.svg',
     forms: ['Bold (counts 40/50, 50/60)', 'Java (counts 60/70, 70/80)'],
     specs: {
       'Aflatoxin': 'Max 4 ppb / Negative (EU standards)',
@@ -422,7 +422,7 @@ export const products: Product[] = [
     id: 'cereal-millet',
     name: 'Green Millet (Bajra)',
     category: 'oil-seeds-cereals',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-oil-seeds-cereals.svg',
     forms: ['Whole Grain'],
     specs: {
       'Purity': '99%',
@@ -435,7 +435,7 @@ export const products: Product[] = [
     id: 'cereal-sorghum',
     name: 'Sorghum (Jowar) - White/Yellow',
     category: 'oil-seeds-cereals',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-oil-seeds-cereals.svg',
     forms: ['Whole Grain'],
     specs: {
       'Moisture': 'Max 12%',
@@ -449,7 +449,7 @@ export const products: Product[] = [
     id: 'blend-curry-powder',
     name: 'Madras Curry Powder',
     category: 'seasonings-blends',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-seasonings-blends.svg',
     forms: ['Powder'],
     specs: {
       'Moisture': 'Max 8.0%',
@@ -461,7 +461,7 @@ export const products: Product[] = [
     id: 'blend-garam-masala',
     name: 'Garam Masala Blend',
     category: 'seasonings-blends',
-    image: '/images/products/turmeric.png',
+    image: '/images/products/cat-seasonings-blends.svg',
     forms: ['Powder'],
     specs: {
       'Aroma': 'Highly aromatic, warm'
@@ -474,7 +474,7 @@ export const products: Product[] = [
     id: 'preserved-silverskin-onion',
     name: 'Silverskin Onion in Vinegar / Brine',
     category: 'preserved-products',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-preserved-products.svg',
     forms: ['Whole in liquid'],
     specs: {
       'Acidity (Acetic Acid)': '1.5% - 2.5%',
@@ -487,7 +487,7 @@ export const products: Product[] = [
     id: 'preserved-ginger',
     name: 'Preserved Ginger in Acetic Acid',
     category: 'preserved-products',
-    image: '/images/products/dehydrated-onion.png',
+    image: '/images/products/cat-preserved-products.svg',
     forms: ['Sliced', 'Whole in liquid'],
     specs: {
       'Acidity': 'Adjustable',
@@ -501,7 +501,7 @@ export const products: Product[] = [
     id: 'paste-garlic',
     name: 'Culinary Garlic Paste',
     category: 'pastes',
-    image: '/images/products/dehydrated-garlic.png',
+    image: '/images/products/cat-pastes.svg',
     forms: ['Smooth Paste'],
     specs: {
       'Solids (TSS)': 'Min 25%',
@@ -514,7 +514,7 @@ export const products: Product[] = [
     id: 'paste-ginger-garlic',
     name: 'Ginger Garlic Blended Paste',
     category: 'pastes',
-    image: '/images/products/dehydrated-garlic.png',
+    image: '/images/products/cat-pastes.svg',
     forms: ['50:50 Blend', '60:40 Blend (Custom)'],
     specs: {
       'pH': '3.9 - 4.3',
