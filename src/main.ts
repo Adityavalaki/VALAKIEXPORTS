@@ -1,10 +1,26 @@
 import './style.css';
+import Lenis from 'lenis';
 import { products, categories } from './data/products';
 import type { Product } from './data/products';
 
 // Global State
 let activeCategory = 'all';
 let searchQuery = '';
+
+// Smooth scrolling (Lenis) — assigned in setupSmoothScroll()
+let lenis: Lenis | null = null;
+const HEADER_OFFSET = 90; // keep anchored sections clear of the fixed header
+
+/** Smoothly scroll to an element or a Y position (Lenis if available, else native). */
+function smoothScrollTo(target: HTMLElement | number) {
+  if (lenis) {
+    lenis.scrollTo(target as any, { offset: typeof target === 'number' ? 0 : -HEADER_OFFSET });
+  } else if (typeof target === 'number') {
+    window.scrollTo({ top: target, behavior: 'smooth' });
+  } else {
+    target.scrollIntoView({ behavior: 'smooth' });
+  }
+}
 
 // DOM Elements (assigned on init)
 let navbar: HTMLElement;
@@ -65,12 +81,42 @@ function init() {
   formSuccessOverlay = document.getElementById('form-success-overlay') as HTMLDivElement;
   successCloseBtn = document.getElementById('btn-success-close') as HTMLButtonElement;
 
+  setupSmoothScroll();
   renderCategories();
   renderProducts();
   setupEventListeners();
   setupScrollProgress();
   setupScrollReveal();
   setupStatsCounter();
+}
+
+/* ==========================================================================
+   SMOOTH SCROLLING (Lenis)
+   ========================================================================== */
+function setupSmoothScroll() {
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) return; // keep native/instant scrolling for reduced-motion users
+
+  lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 1 });
+
+  const raf = (time: number) => {
+    lenis!.raf(time);
+    requestAnimationFrame(raf);
+  };
+  requestAnimationFrame(raf);
+
+  // Route in-page anchor links through Lenis (smooth + correct header offset).
+  document.addEventListener('click', (e) => {
+    const link = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null;
+    if (!link || link.id === 'modal-inquire-btn') return; // modal handles its own scroll
+    const href = link.getAttribute('href');
+    if (!href || href === '#') return;
+    if (href === '#home') { e.preventDefault(); smoothScrollTo(0); return; }
+    const target = document.querySelector(href);
+    if (!target) return;
+    e.preventDefault();
+    smoothScrollTo(target as HTMLElement);
+  });
 }
 
 if (document.readyState === 'loading') {
@@ -237,17 +283,19 @@ function openProductModal(product: Product) {
     // Smooth scroll to contact
     const contactSection = document.getElementById('contact');
     if (contactSection) {
-      contactSection.scrollIntoView({ behavior: 'smooth' });
+      smoothScrollTo(contactSection);
     }
   };
   
   productModal.classList.add('visible');
   document.body.style.overflow = 'hidden';
+  lenis?.stop();
 }
 
 function closeProductModal() {
   productModal.classList.remove('visible');
   document.body.style.overflow = 'auto';
+  lenis?.start();
 }
 
 /* ==========================================================================
@@ -353,7 +401,7 @@ function setupEventListeners() {
 
   // Scroll to Top Smoothly
   scrollToTopBtn.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    smoothScrollTo(0);
   });
 
   // Lead Form submission
