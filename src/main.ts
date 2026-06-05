@@ -3,9 +3,21 @@ import Lenis from 'lenis';
 import { products, categories } from './data/products';
 import type { Product } from './data/products';
 
+// Signal to CSS that JavaScript is available. Reveal-on-scroll sections are
+// only hidden when this class is present, so no-JS visitors and crawlers still
+// see all the content.
+document.documentElement.classList.add('js');
+
+// Respect users who prefer reduced motion (skip count-ups, etc.).
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // Global State
 let activeCategory = 'all';
 let searchQuery = '';
+
+// Remembers what had focus before the product modal opened, so we can restore
+// it when the modal closes (accessibility).
+let lastFocusedElement: HTMLElement | null = null;
 
 // Smooth scrolling (Lenis) — assigned in setupSmoothScroll()
 let lenis: Lenis | null = null;
@@ -85,7 +97,7 @@ function init() {
   renderCategories();
   renderProducts();
   setupEventListeners();
-  setupScrollProgress();
+  setupScrollHandlers();
   setupScrollReveal();
   setupStatsCounter();
 }
@@ -94,8 +106,7 @@ function init() {
    SMOOTH SCROLLING (Lenis)
    ========================================================================== */
 function setupSmoothScroll() {
-  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (prefersReduced) return; // keep native/instant scrolling for reduced-motion users
+  if (prefersReducedMotion) return; // keep native/instant scrolling for reduced-motion users
 
   lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 1 });
 
@@ -287,49 +298,48 @@ function openProductModal(product: Product) {
     }
   };
   
+  lastFocusedElement = document.activeElement as HTMLElement | null;
   productModal.classList.add('visible');
+  productModal.setAttribute('aria-hidden', 'false');
   document.body.style.overflow = 'hidden';
   lenis?.stop();
+  modalCloseBtn.focus(); // move focus into the dialog
 }
 
 function closeProductModal() {
   productModal.classList.remove('visible');
+  productModal.setAttribute('aria-hidden', 'true');
   document.body.style.overflow = 'auto';
   lenis?.start();
+  lastFocusedElement?.focus(); // return focus to the trigger
 }
 
 /* ==========================================================================
    EVENT LISTENERS
    ========================================================================== */
 function setupEventListeners() {
-  // Mobile nav toggler
+  // Mobile nav drawer — visuals (hamburger -> X) are handled in CSS via the
+  // `.active` class; here we just keep state and ARIA in sync.
+  const setDrawer = (open: boolean) => {
+    mobileToggle.classList.toggle('active', open);
+    mobileDrawer.classList.toggle('active', open);
+    mobileToggle.setAttribute('aria-expanded', String(open));
+  };
+
   mobileToggle.addEventListener('click', () => {
-    mobileToggle.classList.toggle('active');
-    mobileDrawer.classList.toggle('active');
-    
-    // Animate bars of hamburger
-    const bars = mobileToggle.querySelectorAll('.bar') as NodeListOf<HTMLElement>;
-    if (mobileToggle.classList.contains('active')) {
-      bars[0].style.transform = 'rotate(-45deg) translate(-5px, 6px)';
-      bars[1].style.opacity = '0';
-      bars[2].style.transform = 'rotate(45deg) translate(-5px, -6px)';
-    } else {
-      bars[0].style.transform = 'none';
-      bars[1].style.opacity = '1';
-      bars[2].style.transform = 'none';
-    }
+    setDrawer(!mobileToggle.classList.contains('active'));
   });
 
-  // Close drawer on clicking item
+  // Close drawer when a link inside it is clicked
   document.querySelectorAll('.drawer-item').forEach(item => {
-    item.addEventListener('click', () => {
-      mobileToggle.classList.remove('active');
-      mobileDrawer.classList.remove('active');
-      const bars = mobileToggle.querySelectorAll('.bar') as NodeListOf<HTMLElement>;
-      bars[0].style.transform = 'none';
-      bars[1].style.opacity = '1';
-      bars[2].style.transform = 'none';
-    });
+    item.addEventListener('click', () => setDrawer(false));
+  });
+
+  // Close drawer with Escape
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && mobileToggle.classList.contains('active')) {
+      setDrawer(false);
+    }
   });
 
   // Close modal click listeners
@@ -342,6 +352,24 @@ function setupEventListeners() {
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && productModal.classList.contains('visible')) {
       closeProductModal();
+    }
+  });
+
+  // Trap Tab focus within the modal while it is open
+  productModal.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const focusable = productModal.querySelectorAll<HTMLElement>(
+      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    );
+    if (focusable.length === 0) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+      e.preventDefault();
+      first.focus();
     }
   });
 
@@ -385,20 +413,6 @@ function setupEventListeners() {
     filterAndRenderProducts();
   });
 
-  // Navbar transparent on top, solid on scroll
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 50) {
-      navbar.classList.add('scrolled');
-      scrollToTopBtn.classList.add('visible');
-    } else {
-      navbar.classList.remove('scrolled');
-      scrollToTopBtn.classList.remove('visible');
-    }
-    
-    // Highlight Active Navbar Items
-    highlightActiveNavItem();
-  });
-
   // Scroll to Top Smoothly
   scrollToTopBtn.addEventListener('click', () => {
     smoothScrollTo(0);
@@ -429,15 +443,37 @@ function setupEventListeners() {
 }
 
 /* ==========================================================================
-   SCROLL PROGRESS BAR
+   SCROLL HANDLERS (navbar state, progress bar, scroll-top button, nav spy)
+   Consolidated into one rAF-throttled listener to avoid layout thrash.
    ========================================================================== */
-function setupScrollProgress() {
-  window.addEventListener('scroll', () => {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+function setupScrollHandlers() {
+  let ticking = false;
+
+  const update = () => {
+    const y = window.scrollY;
+
+    // Solid navbar + reveal the scroll-to-top button past the fold
+    navbar.classList.toggle('scrolled', y > 50);
+    scrollToTopBtn.classList.toggle('visible', y > 50);
+
+    // Reading progress bar
     const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    scrollProgress.style.width = scrolled + '%';
-  });
+    scrollProgress.style.width = (height > 0 ? (y / height) * 100 : 0) + '%';
+
+    // Active nav link (scroll spy)
+    highlightActiveNavItem();
+
+    ticking = false;
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }, { passive: true });
+
+  update(); // set initial state on load
 }
 
 /* ==========================================================================
@@ -486,6 +522,13 @@ function setupStatsCounter() {
         document.querySelectorAll('.stat-number').forEach(stat => {
           const target = parseInt(stat.getAttribute('data-target') || '0', 10);
           const suffix = stat.getAttribute('data-suffix') || '';
+
+          // Skip the count-up animation for reduced-motion users
+          if (prefersReducedMotion) {
+            stat.textContent = target.toString() + suffix;
+            return;
+          }
+
           const duration = 2000; // 2s duration
           const startTime = performance.now();
 
