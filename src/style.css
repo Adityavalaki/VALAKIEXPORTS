@@ -369,6 +369,7 @@ button, input, select, textarea {
   align-items: center;
   justify-content: center;
   padding-top: var(--header-height);
+  padding-bottom: 110px; /* reserve room for the scroll indicator so it never overlaps the CTAs */
   background: url('/images/products/turmeric.png') center/cover no-repeat;
   background-attachment: fixed;
 }
@@ -435,7 +436,7 @@ button, input, select, textarea {
 
 .scroll-indicator {
   position: absolute;
-  bottom: 40px;
+  bottom: 32px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -446,6 +447,14 @@ button, input, select, textarea {
   font-size: 12px;
   font-family: var(--font-mono);
   letter-spacing: 1px;
+}
+
+/* On short viewports the centered hero content reaches the bottom, so hide
+   the scroll indicator to avoid overlapping the call-to-action buttons. */
+@media (max-height: 760px) {
+  .scroll-indicator {
+    display: none;
+  }
 }
 
 .indicator-mouse {
@@ -534,15 +543,15 @@ button, input, select, textarea {
 
 .about-image-wrapper {
   position: relative;
-  padding: 20px;
 }
 
 .image-border-decoration {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: calc(100% - 20px);
-  height: calc(100% - 20px);
+  /* uniform 20px offset down-right of the image, framing it cleanly */
+  top: 20px;
+  left: 20px;
+  right: -20px;
+  bottom: -20px;
   border: 2px solid var(--color-primary);
   border-radius: 12px;
   z-index: 1;
@@ -551,12 +560,12 @@ button, input, select, textarea {
 .about-main-image {
   position: relative;
   z-index: 2;
+  display: block;
   border-radius: 12px;
   width: 100%;
   height: 480px;
   object-fit: cover;
   box-shadow: var(--shadow-lg);
-  transform: translate(20px, 20px);
   background-color: var(--color-bg-card);
 }
 
@@ -685,6 +694,25 @@ button, input, select, textarea {
 
 .right::after {
   left: -10px;
+}
+
+/* Connector bridging each card to its node on the centre line */
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  top: 39px;
+  width: 40px;
+  height: 2px;
+  background-color: var(--color-border-hover);
+  z-index: 0;
+}
+
+.left::before {
+  right: 0;
+}
+
+.right::before {
+  left: 0;
 }
 
 .left {
@@ -1740,6 +1768,16 @@ button, input, select, textarea {
   .timeline-container::after {
     left: 20px;
     right: auto;
+  }
+
+  /* all cards sit to the right of the line on mobile, so the connector
+     always runs from the line out to the card's left edge */
+  .timeline-container::before,
+  .left::before,
+  .right::before {
+    left: 30px;
+    right: auto;
+    width: 30px;
   }
 
   .right {
