@@ -213,32 +213,43 @@ button, input, select, textarea {
 /* ==========================================================================
    NAVIGATION HEADER
    ========================================================================== */
+/* Floating, frosted-glass "pill" header that sits inset from the top edge */
 .main-header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: var(--header-height);
+  padding: 18px 24px;
   background-color: transparent;
   z-index: 99;
-  transition: var(--transition);
+  transition: padding 0.3s ease;
 }
 
 .main-header.scrolled {
-  background-color: var(--color-bg-nav);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--color-border);
-  height: 70px;
+  padding: 10px 24px;
 }
 
 .header-container {
+  position: relative;
   max-width: var(--max-width);
   margin: 0 auto;
-  height: 100%;
-  padding: 0 24px;
+  padding: 11px 12px 11px 18px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-radius: 999px;
+  background: rgba(18, 24, 31, 0.55);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.main-header.scrolled .header-container {
+  background: rgba(10, 14, 18, 0.82);
+  border-color: var(--color-border-hover);
+  box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
 }
 
 .logo-link {
@@ -269,34 +280,173 @@ button, input, select, textarea {
   color: var(--color-primary-light);
 }
 
+/* Centered nav menu (absolutely centered within the pill) */
 .nav-menu {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
-  gap: 32px;
+  gap: 30px;
 }
 
 .nav-item {
+  position: relative;
   color: var(--color-text-muted);
   font-size: 15px;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 0;
 }
 
-.nav-item:hover, .nav-item.active {
-  color: var(--color-primary-light);
+/* Animated underline */
+.nav-item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.nav-item.contact-btn {
+.nav-item:hover,
+.nav-item.active {
+  color: var(--color-text-main);
+}
+
+.nav-item:hover::after,
+.nav-item.active::after {
+  transform: scaleX(1);
+}
+
+.dropdown-chevron {
+  transition: transform 0.3s ease;
+  opacity: 0.7;
+}
+
+.nav-dropdown:hover .dropdown-chevron,
+.nav-dropdown:focus-within .dropdown-chevron {
+  transform: rotate(180deg);
+}
+
+/* Right-side actions: pill CTA + mobile toggle */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-cta {
   background-color: var(--color-accent);
   color: #0c0e12;
-  padding: 10px 20px;
-  border-radius: 6px;
+  padding: 10px 22px;
+  border-radius: 999px;
   font-weight: 600;
+  font-size: 15px;
+  white-space: nowrap;
+  transition: var(--transition);
 }
 
-.nav-item.contact-btn:hover {
+.nav-cta:hover {
   background-color: var(--color-accent-hover);
   color: #000;
   transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(212, 168, 83, 0.3);
+}
+
+/* ---------- Mega-menu under "Product Catalog" ---------- */
+.nav-dropdown {
+  position: relative;
+}
+
+/* invisible bridge so hover survives the gap between link and panel */
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -20px;
+  right: -20px;
+  height: 26px;
+}
+
+.mega-menu {
+  position: absolute;
+  top: calc(100% + 22px);
+  left: 50%;
+  transform: translateX(-50%) translateY(8px);
+  width: min(620px, 88vw);
+  padding: 16px;
+  background: rgba(13, 18, 23, 0.92);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  z-index: 100;
+}
+
+.nav-dropdown:hover .mega-menu,
+.nav-dropdown:focus-within .mega-menu,
+.mega-menu.open {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* keep the menu closed right after a selection, until the pointer leaves */
+.nav-dropdown.menu-dismissed .mega-menu {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.mega-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.mega-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: var(--color-text-muted);
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.mega-item:hover {
+  background: rgba(42, 140, 181, 0.12);
+  color: var(--color-text-main);
+}
+
+.mega-item .m-icon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.mega-item .m-text {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.3;
 }
 
 /* Mobile Toggle Hamburger */
@@ -1746,7 +1896,8 @@ button, input, select, textarea {
     display: flex;
   }
 
-  .nav-menu {
+  .nav-menu,
+  .nav-cta {
     display: none;
   }
 

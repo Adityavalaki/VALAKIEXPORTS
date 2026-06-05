@@ -95,6 +95,7 @@ function init() {
 
   setupSmoothScroll();
   renderCategories();
+  renderMegaMenu();
   renderProducts();
   setupEventListeners();
   setupScrollHandlers();
@@ -145,21 +146,55 @@ function renderCategories() {
     chip.className = 'category-chip';
     chip.setAttribute('data-category', cat.id);
     chip.id = `btn-cat-${cat.id}`;
-    
+
     chip.innerHTML = `
       <span class="chip-icon">${cat.icon}</span>
       <span class="chip-text">${cat.name}</span>
     `;
-    
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.category-chip').forEach(btn => btn.classList.remove('active'));
-      chip.classList.add('active');
-      activeCategory = cat.id;
-      filterAndRenderProducts();
-    });
-    
+
+    chip.addEventListener('click', () => selectCategory(cat.id));
+
     categoriesContainer.appendChild(chip);
   });
+}
+
+/** Populate the navbar mega-menu with the product categories. */
+function renderMegaMenu() {
+  const grid = document.getElementById('mega-menu-grid');
+  if (!grid) return;
+  const dropdown = document.getElementById('nav-dropdown-catalog');
+  categories.forEach(cat => {
+    const item = document.createElement('button');
+    item.type = 'button';
+    item.className = 'mega-item';
+    item.setAttribute('role', 'menuitem');
+    item.setAttribute('data-category', cat.id);
+    item.innerHTML = `
+      <span class="m-icon">${cat.icon}</span>
+      <span class="m-text">${cat.name}</span>
+    `;
+    item.addEventListener('click', () => {
+      selectCategory(cat.id);
+      const catalog = document.getElementById('catalog');
+      if (catalog) smoothScrollTo(catalog);
+      // dismiss the mega-menu after selection (re-opens on next hover/focus)
+      dropdown?.classList.add('menu-dismissed');
+      (document.activeElement as HTMLElement | null)?.blur();
+    });
+    grid.appendChild(item);
+  });
+
+  // Re-enable the menu once the pointer leaves the dropdown
+  dropdown?.addEventListener('mouseleave', () => dropdown.classList.remove('menu-dismissed'));
+}
+
+/** Activate a category across the chips and re-render the grid. */
+function selectCategory(id: string) {
+  activeCategory = id;
+  document.querySelectorAll('.category-chip').forEach(btn => {
+    btn.classList.toggle('active', btn.getAttribute('data-category') === id);
+  });
+  filterAndRenderProducts();
 }
 
 function renderProducts(filteredProducts: Product[] = products) {
@@ -397,21 +432,11 @@ function setupEventListeners() {
     searchInput.value = '';
     searchQuery = '';
     searchClearBtn.classList.remove('visible');
-    activeCategory = 'all';
-    
-    document.querySelectorAll('.category-chip').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('btn-cat-all')?.classList.add('active');
-    
-    filterAndRenderProducts();
+    selectCategory('all');
   });
 
-  // Reset filters initially when clicking 'All Products'
-  document.getElementById('btn-cat-all')?.addEventListener('click', () => {
-    document.querySelectorAll('.category-chip').forEach(btn => btn.classList.remove('active'));
-    document.getElementById('btn-cat-all')?.classList.add('active');
-    activeCategory = 'all';
-    filterAndRenderProducts();
-  });
+  // "All Products" chip
+  document.getElementById('btn-cat-all')?.addEventListener('click', () => selectCategory('all'));
 
   // Scroll to Top Smoothly
   scrollToTopBtn.addEventListener('click', () => {
