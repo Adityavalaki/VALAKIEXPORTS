@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 450" width="600" height="450" role="img" aria-label="Chilli Products">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#151d25"/>
+      <stop offset="1" stop-color="#0a0e12"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2A8CB5"/>
+      <stop offset="1" stop-color="#D4A853"/>
+    </linearGradient>
+  </defs>
+  <rect width="600" height="450" fill="url(#bg)"/>
+  <circle cx="535" cy="-40" r="210" fill="#2A8CB5" opacity="0.12"/>
+  <circle cx="40" cy="480" r="180" fill="#D4A853" opacity="0.08"/>
+  <circle cx="500" cy="360" r="6" fill="#D4A853" opacity="0.5"/>
+  <circle cx="525" cy="385" r="4" fill="#2A8CB5" opacity="0.5"/>
+  <text x="48" y="198" font-family="Georgia,'Times New Roman',serif" font-size="48" font-weight="700" fill="#f3f5f8">Chilli</text>
+  <text x="48" y="252" font-family="Georgia,'Times New Roman',serif" font-size="48" font-weight="700" fill="#f3f5f8">Products</text>
+  <rect x="50" y="286" width="66" height="4" rx="2" fill="url(#rule)"/>
+  <text x="50" y="392" font-family="'Courier New',monospace" font-size="16" letter-spacing="4" font-weight="700" fill="#2A8CB5">VALAKI EXPORTS CO.</text>
+</svg>

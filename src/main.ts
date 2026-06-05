@@ -485,23 +485,24 @@ function setupStatsCounter() {
         
         document.querySelectorAll('.stat-number').forEach(stat => {
           const target = parseInt(stat.getAttribute('data-target') || '0', 10);
+          const suffix = stat.getAttribute('data-suffix') || '';
           const duration = 2000; // 2s duration
           const startTime = performance.now();
-          
+
           function updateCounter(currentTime: number) {
             const elapsed = currentTime - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            
+
             // Ease out quad formula
             const easeProgress = progress * (2 - progress);
             const value = Math.floor(easeProgress * target);
-            
+
             stat.textContent = value.toString();
-            
+
             if (progress < 1) {
               requestAnimationFrame(updateCounter);
             } else {
-              stat.textContent = target.toString() + (target === 100 ? '' : '+');
+              stat.textContent = target.toString() + suffix;
             }
           }
           

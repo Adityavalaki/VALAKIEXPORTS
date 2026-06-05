@@ -87,7 +87,7 @@ button, input, select, textarea {
 .section-container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 100px 24px;
+  padding: 72px 24px;
 }
 
 .text-center {
