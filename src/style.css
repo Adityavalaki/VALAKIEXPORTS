@@ -1515,6 +1515,12 @@ button, input, select, textarea {
   border-top: 1px solid var(--color-border);
 }
 
+.footer-container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
 .footer-top {
   padding: 80px 0;
 }
@@ -1567,7 +1573,8 @@ button, input, select, textarea {
 
 .footer-bottom {
   border-top: 1px solid rgba(42, 140, 181, 0.08);
-  padding: 30px 0;
+  /* extra bottom space so the fixed scroll-to-top button never overlaps the text */
+  padding: 30px 0 90px;
 }
 
 .footer-bottom-flex {
@@ -1684,6 +1691,10 @@ button, input, select, textarea {
 
   .section-container {
     padding: 60px 20px;
+  }
+
+  .footer-container {
+    padding: 0 20px;
   }
 
   .mobile-toggle {
