@@ -96,6 +96,7 @@ function init() {
   setupSmoothScroll();
   renderCategories();
   renderMegaMenu();
+  renderDrawerCategories();
   renderProducts();
   setupEventListeners();
   setupScrollHandlers();
@@ -195,6 +196,36 @@ function selectCategory(id: string) {
     btn.classList.toggle('active', btn.getAttribute('data-category') === id);
   });
   filterAndRenderProducts();
+}
+
+/** Open/close the mobile drawer and keep ARIA in sync. */
+function setDrawer(open: boolean) {
+  mobileToggle.classList.toggle('active', open);
+  mobileDrawer.classList.toggle('active', open);
+  mobileToggle.setAttribute('aria-expanded', String(open));
+}
+
+/** Populate the drawer's collapsible category quick-jump list. */
+function renderDrawerCategories() {
+  const container = document.getElementById('drawer-categories');
+  if (!container) return;
+
+  const makeItem = (id: string, icon: string, name: string) => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'drawer-subitem';
+    btn.innerHTML = `<span class="m-icon">${icon}</span><span>${name}</span>`;
+    btn.addEventListener('click', () => {
+      selectCategory(id);
+      setDrawer(false);
+      const catalog = document.getElementById('catalog');
+      if (catalog) smoothScrollTo(catalog);
+    });
+    return btn;
+  };
+
+  container.appendChild(makeItem('all', '📦', 'All Products'));
+  categories.forEach(cat => container.appendChild(makeItem(cat.id, cat.icon, cat.name)));
 }
 
 function renderProducts(filteredProducts: Product[] = products) {
@@ -355,19 +386,22 @@ function closeProductModal() {
 function setupEventListeners() {
   // Mobile nav drawer — visuals (hamburger -> X) are handled in CSS via the
   // `.active` class; here we just keep state and ARIA in sync.
-  const setDrawer = (open: boolean) => {
-    mobileToggle.classList.toggle('active', open);
-    mobileDrawer.classList.toggle('active', open);
-    mobileToggle.setAttribute('aria-expanded', String(open));
-  };
-
   mobileToggle.addEventListener('click', () => {
     setDrawer(!mobileToggle.classList.contains('active'));
   });
 
-  // Close drawer when a link inside it is clicked
-  document.querySelectorAll('.drawer-item').forEach(item => {
+  // Close drawer when a navigation link inside it is clicked
+  // (the "Product Catalog" accordion button is excluded — it expands instead).
+  document.querySelectorAll('a.drawer-item').forEach(item => {
     item.addEventListener('click', () => setDrawer(false));
+  });
+
+  // "Product Catalog" accordion toggle
+  const drawerToggle = document.getElementById('drawer-catalog-toggle');
+  const drawerCategories = document.getElementById('drawer-categories');
+  drawerToggle?.addEventListener('click', () => {
+    const open = drawerCategories?.classList.toggle('open') ?? false;
+    drawerToggle.setAttribute('aria-expanded', String(open));
   });
 
   // Close drawer with Escape
