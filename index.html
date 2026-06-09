@@ -99,7 +99,18 @@
       <nav class="drawer-nav">
         <a href="#home" class="drawer-item" id="drawer-link-home">Home</a>
         <a href="#about" class="drawer-item" id="drawer-link-about">About Us</a>
-        <a href="#catalog" class="drawer-item" id="drawer-link-catalog">Product Catalog</a>
+
+        <div class="drawer-group">
+          <button class="drawer-item drawer-accordion" id="drawer-catalog-toggle" aria-expanded="false" aria-controls="drawer-categories">
+            <span>Product Catalog</span>
+            <svg class="drawer-chevron" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+              <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+            </svg>
+          </button>
+          <!-- Category quick-jump list (injected by JS) -->
+          <div class="drawer-categories" id="drawer-categories"></div>
+        </div>
+
         <a href="#process" class="drawer-item" id="drawer-link-process">Our Process</a>
         <a href="#certificates" class="drawer-item" id="drawer-link-certificates">Certifications</a>
         <a href="#contact" class="drawer-item drawer-btn" id="drawer-link-contact">Inquire Now</a>
