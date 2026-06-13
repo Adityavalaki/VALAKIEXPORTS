@@ -1,658 +1,363 @@
-import './style.css';
-import Lenis from 'lenis';
-import { products, categories } from './data/products';
-import type { Product } from './data/products';
+import "./style.css";
+import { PRODUCTS, CATEGORIES, type Product } from "./products.ts";
 
-// Signal to CSS that JavaScript is available. Reveal-on-scroll sections are
-// only hidden when this class is present, so no-JS visitors and crawlers still
-// see all the content.
-document.documentElement.classList.add('js');
+/* ==========================================================================
+   SHARED CHROME — top marquee + nav + footer, injected on every page
+   ========================================================================== */
 
-// Respect users who prefer reduced motion (skip count-ups, etc.).
-const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const navMarqueeSeg = `
+  <span class="seg">
+    <span class="hl">Export-grade dehydrated foods</span><span class="sep">/</span>
+    <span>18 MT / day capacity</span><span class="sep">/</span>
+    <span>USFDA · ISO 22000 · HALAL · KOSHER · FSSAI</span><span class="sep">/</span>
+    <span>Shipping to 40+ countries</span><span class="sep">/</span>
+    <span class="hl">Since 1987 · Mahuva, Gujarat</span><span class="sep">/</span>
+  </span>`;
 
-// Global State
-let activeCategory = 'all';
-let searchQuery = '';
+const navHTML = `
+<header class="site-header">
+  <div class="topbar">
+    <div class="ve-marq" style="--dur:48s">
+      <div class="ve-marq__t">${navMarqueeSeg}${navMarqueeSeg}</div>
+    </div>
+  </div>
+  <div class="navbar">
+    <div class="navbar__inner">
+      <a class="navbar__logo" href="index.html" aria-label="Valaki Exports Co. home">
+        <img src="/images/logo/logo-full.png" alt="Valaki Exports Co." />
+      </a>
+      <nav class="navbar__menu" aria-label="Primary">
+        <a class="navlink" data-nav="home" href="index.html">Home</a>
+        <a class="navlink" data-nav="products" href="products.html">Products</a>
+        <a class="navlink" data-nav="about" href="about.html">About</a>
+        <a class="navlink" data-nav="contact" href="contact.html">Contact</a>
+      </nav>
+      <a class="ve-btn ve-btn--primary ve-btn--md navbar__cta" href="contact.html">Request a Quote</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+      </button>
+    </div>
+  </div>
+</header>
+<div class="drawer-backdrop" id="drawer-backdrop"></div>
+<aside class="mobile-drawer" aria-label="Mobile">
+  <a class="navlink" data-nav="home" href="index.html">Home</a>
+  <a class="navlink" data-nav="products" href="products.html">Products</a>
+  <a class="navlink" data-nav="about" href="about.html">About</a>
+  <a class="navlink" data-nav="contact" href="contact.html">Contact</a>
+  <a class="ve-btn ve-btn--primary ve-btn--lg ve-btn--block" href="contact.html">Request a Quote</a>
+</aside>`;
 
-// Remembers what had focus before the product modal opened, so we can restore
-// it when the modal closes (accessibility).
-let lastFocusedElement: HTMLElement | null = null;
+const footerHTML = `
+<footer class="site-footer">
+  <div class="footer-grid">
+    <div>
+      <img src="/images/logo/logo-mark.png" alt="Valaki Exports" />
+      <p class="f-desc">Export-grade dehydrated onion, garlic, vegetables and spices. A Valaki Brothers company, manufacturing with Euro Foods Industries since 1987.</p>
+    </div>
+    <div>
+      <h4>Navigate</h4>
+      <a class="flink" href="index.html">Home</a>
+      <a class="flink" href="products.html">Products</a>
+      <a class="flink" href="about.html">About</a>
+      <a class="flink" href="contact.html">Contact</a>
+    </div>
+    <div>
+      <h4>Range</h4>
+      <span class="f-item">Dehydrated Onion</span>
+      <span class="f-item">Dehydrated Garlic</span>
+      <span class="f-item">Spices &amp; Chilli</span>
+      <span class="f-item">Seeds &amp; Pastes</span>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <p class="f-contact">Mahuva&ndash;Bhavnagar Highway,<br/>Mahuva 364290, Gujarat, India<br/>export@valakiexports.com<br/>+91 98765 43210</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Valaki Exports Co. · All rights reserved</span>
+    <span>Made in India</span>
+  </div>
+</footer>`;
 
-// Smooth scrolling (Lenis) — assigned in setupSmoothScroll()
-let lenis: Lenis | null = null;
-const HEADER_OFFSET = 90; // keep anchored sections clear of the fixed header
+function mountChrome(): void {
+  const navSlot = document.getElementById("site-nav");
+  const footSlot = document.getElementById("site-footer");
+  if (navSlot) navSlot.innerHTML = navHTML;
+  if (footSlot) footSlot.innerHTML = footerHTML;
 
-/** Smoothly scroll to an element or a Y position (Lenis if available, else native). */
-function smoothScrollTo(target: HTMLElement | number) {
-  if (lenis) {
-    lenis.scrollTo(target as any, { offset: typeof target === 'number' ? 0 : -HEADER_OFFSET });
-  } else if (typeof target === 'number') {
-    window.scrollTo({ top: target, behavior: 'smooth' });
-  } else {
-    target.scrollIntoView({ behavior: 'smooth' });
+  // active link
+  const page = document.body.dataset.page;
+  if (page) {
+    document
+      .querySelectorAll<HTMLAnchorElement>(`.navlink[data-nav="${page}"]`)
+      .forEach((a) => a.classList.add("is-active"));
   }
-}
 
-// DOM Elements (assigned on init)
-let navbar: HTMLElement;
-let mobileToggle: HTMLButtonElement;
-let mobileDrawer: HTMLDivElement;
-let scrollProgress: HTMLDivElement;
-let scrollToTopBtn: HTMLButtonElement;
-let productsGrid: HTMLDivElement;
-let categoriesContainer: HTMLDivElement;
-let searchInput: HTMLInputElement;
-let searchClearBtn: HTMLButtonElement;
-let emptyState: HTMLDivElement;
-let resetFiltersBtn: HTMLButtonElement;
-
-// Modal Elements (assigned on init)
-let productModal: HTMLDivElement;
-let modalCloseBtn: HTMLButtonElement;
-let modalImg: HTMLImageElement;
-let modalCat: HTMLSpanElement;
-let modalName: HTMLHeadingElement;
-let modalDesc: HTMLParagraphElement;
-let modalForms: HTMLDivElement;
-let modalSpecs: HTMLTableSectionElement;
-let modalInquireBtn: HTMLAnchorElement;
-
-// Form Elements (assigned on init)
-let leadForm: HTMLFormElement;
-let formSuccessOverlay: HTMLDivElement;
-let successCloseBtn: HTMLButtonElement;
-
-/* ==========================================================================
-   INITIALIZATION
-   ========================================================================== */
-function init() {
-  navbar = document.getElementById('navbar') as HTMLElement;
-  mobileToggle = document.getElementById('mobile-toggle') as HTMLButtonElement;
-  mobileDrawer = document.getElementById('mobile-drawer') as HTMLDivElement;
-  scrollProgress = document.getElementById('scroll-progress') as HTMLDivElement;
-  scrollToTopBtn = document.getElementById('scroll-to-top') as HTMLButtonElement;
-  productsGrid = document.getElementById('products-grid') as HTMLDivElement;
-  categoriesContainer = document.getElementById('categories-container') as HTMLDivElement;
-  searchInput = document.getElementById('product-search') as HTMLInputElement;
-  searchClearBtn = document.getElementById('search-clear') as HTMLButtonElement;
-  emptyState = document.getElementById('catalog-empty-state') as HTMLDivElement;
-  resetFiltersBtn = document.getElementById('btn-reset-filters') as HTMLButtonElement;
-
-  productModal = document.getElementById('product-modal') as HTMLDivElement;
-  modalCloseBtn = document.getElementById('modal-close') as HTMLButtonElement;
-  modalImg = document.getElementById('modal-product-img') as HTMLImageElement;
-  modalCat = document.getElementById('modal-product-cat') as HTMLSpanElement;
-  modalName = document.getElementById('modal-product-name') as HTMLHeadingElement;
-  modalDesc = document.getElementById('modal-product-desc') as HTMLParagraphElement;
-  modalForms = document.getElementById('modal-product-forms') as HTMLDivElement;
-  modalSpecs = document.getElementById('modal-product-specs') as HTMLTableSectionElement;
-  modalInquireBtn = document.getElementById('modal-inquire-btn') as HTMLAnchorElement;
-
-  leadForm = document.getElementById('lead-form') as HTMLFormElement;
-  formSuccessOverlay = document.getElementById('form-success-overlay') as HTMLDivElement;
-  successCloseBtn = document.getElementById('btn-success-close') as HTMLButtonElement;
-
-  setupSmoothScroll();
-  renderCategories();
-  renderMegaMenu();
-  renderDrawerCategories();
-  renderProducts();
-  setupEventListeners();
-  setupScrollHandlers();
-  setupScrollReveal();
-  setupStatsCounter();
-}
-
-/* ==========================================================================
-   SMOOTH SCROLLING (Lenis)
-   ========================================================================== */
-function setupSmoothScroll() {
-  if (prefersReducedMotion) return; // keep native/instant scrolling for reduced-motion users
-
-  lenis = new Lenis({ lerp: 0.09, smoothWheel: true, wheelMultiplier: 1 });
-
-  const raf = (time: number) => {
-    lenis!.raf(time);
-    requestAnimationFrame(raf);
+  // mobile drawer
+  const toggle = document.getElementById("nav-toggle");
+  const backdrop = document.getElementById("drawer-backdrop");
+  const close = () => {
+    document.body.classList.remove("nav-open");
+    toggle?.setAttribute("aria-expanded", "false");
   };
-  requestAnimationFrame(raf);
-
-  // Route in-page anchor links through Lenis (smooth + correct header offset).
-  document.addEventListener('click', (e) => {
-    const link = (e.target as HTMLElement).closest('a[href^="#"]') as HTMLAnchorElement | null;
-    if (!link || link.id === 'modal-inquire-btn') return; // modal handles its own scroll
-    const href = link.getAttribute('href');
-    if (!href || href === '#') return;
-    if (href === '#home') { e.preventDefault(); smoothScrollTo(0); return; }
-    const target = document.querySelector(href);
-    if (!target) return;
-    e.preventDefault();
-    smoothScrollTo(target as HTMLElement);
+  toggle?.addEventListener("click", () => {
+    const open = document.body.classList.toggle("nav-open");
+    toggle.setAttribute("aria-expanded", String(open));
   });
-}
-
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', init);
-} else {
-  init();
+  backdrop?.addEventListener("click", close);
+  document.querySelectorAll(".mobile-drawer a").forEach((a) => a.addEventListener("click", close));
 }
 
 /* ==========================================================================
-   CATEGORY & PRODUCT RENDERING
+   SCROLL-TO-TOP + SCROLL REVEAL
    ========================================================================== */
-function renderCategories() {
-  categories.forEach(cat => {
-    const chip = document.createElement('button');
-    chip.className = 'category-chip';
-    chip.setAttribute('data-category', cat.id);
-    chip.id = `btn-cat-${cat.id}`;
 
-    chip.innerHTML = `
-      <span class="chip-icon">${cat.icon}</span>
-      <span class="chip-text">${cat.name}</span>
-    `;
-
-    chip.addEventListener('click', () => selectCategory(cat.id));
-
-    categoriesContainer.appendChild(chip);
-  });
+function mountScrollTop(): void {
+  const btn = document.createElement("button");
+  btn.className = "scroll-top";
+  btn.setAttribute("aria-label", "Scroll to top");
+  btn.innerHTML = `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M7.41 15.41L12 10.83l4.59 4.58L18 14l-6-6-6 6z"/></svg>`;
+  document.body.appendChild(btn);
+  btn.addEventListener("click", () => window.scrollTo({ top: 0, behavior: "smooth" }));
+  const onScroll = () => btn.classList.toggle("show", window.scrollY > 600);
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
 }
 
-/** Populate the navbar mega-menu with the product categories. */
-function renderMegaMenu() {
-  const grid = document.getElementById('mega-menu-grid');
-  if (!grid) return;
-  const dropdown = document.getElementById('nav-dropdown-catalog');
-  categories.forEach(cat => {
-    const item = document.createElement('button');
-    item.type = 'button';
-    item.className = 'mega-item';
-    item.setAttribute('role', 'menuitem');
-    item.setAttribute('data-category', cat.id);
-    item.innerHTML = `
-      <span class="m-icon">${cat.icon}</span>
-      <span class="m-text">${cat.name}</span>
-    `;
-    item.addEventListener('click', () => {
-      selectCategory(cat.id);
-      const catalog = document.getElementById('catalog');
-      if (catalog) smoothScrollTo(catalog);
-      // dismiss the mega-menu after selection (re-opens on next hover/focus)
-      dropdown?.classList.add('menu-dismissed');
-      (document.activeElement as HTMLElement | null)?.blur();
-    });
-    grid.appendChild(item);
-  });
-
-  // Re-enable the menu once the pointer leaves the dropdown
-  dropdown?.addEventListener('mouseleave', () => dropdown.classList.remove('menu-dismissed'));
-}
-
-/** Activate a category across the chips and re-render the grid. */
-function selectCategory(id: string) {
-  activeCategory = id;
-  document.querySelectorAll('.category-chip').forEach(btn => {
-    btn.classList.toggle('active', btn.getAttribute('data-category') === id);
-  });
-  filterAndRenderProducts();
-}
-
-/** Open/close the mobile drawer and keep ARIA in sync. */
-function setDrawer(open: boolean) {
-  mobileToggle.classList.toggle('active', open);
-  mobileDrawer.classList.toggle('active', open);
-  mobileToggle.setAttribute('aria-expanded', String(open));
-}
-
-/** Populate the drawer's collapsible category quick-jump list. */
-function renderDrawerCategories() {
-  const container = document.getElementById('drawer-categories');
-  if (!container) return;
-
-  const makeItem = (id: string, icon: string, name: string) => {
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.className = 'drawer-subitem';
-    btn.innerHTML = `<span class="m-icon">${icon}</span><span>${name}</span>`;
-    btn.addEventListener('click', () => {
-      selectCategory(id);
-      setDrawer(false);
-      const catalog = document.getElementById('catalog');
-      if (catalog) smoothScrollTo(catalog);
-    });
-    return btn;
-  };
-
-  container.appendChild(makeItem('all', '📦', 'All Products'));
-  categories.forEach(cat => container.appendChild(makeItem(cat.id, cat.icon, cat.name)));
-}
-
-function renderProducts(filteredProducts: Product[] = products) {
-  productsGrid.innerHTML = '';
-  
-  if (filteredProducts.length === 0) {
-    emptyState.classList.add('visible');
-    productsGrid.style.display = 'none';
+function mountReveal(): void {
+  const els = document.querySelectorAll<HTMLElement>(".reveal");
+  if (!els.length) return;
+  if (!("IntersectionObserver" in window)) {
+    els.forEach((el) => el.classList.add("is-in"));
     return;
   }
-  
-  emptyState.classList.remove('visible');
-  productsGrid.style.display = 'grid';
-  
-  filteredProducts.forEach(product => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.id = `product-card-${product.id}`;
-    card.setAttribute('data-id', product.id);
-    
-    const catInfo = categories.find(c => c.id === product.category);
-    const catName = catInfo ? catInfo.name : 'Product';
-    const catIcon = catInfo ? catInfo.icon : '📦';
-    
-    card.innerHTML = `
-      <div class="product-image-container">
-        <img src="${product.image}" alt="${product.name}" loading="lazy" onerror="this.src='/images/products/dehydrated-onion.png';" />
-        <span class="product-badge">${catIcon} ${catName}</span>
-      </div>
-      <div class="product-body">
-        <h3>${product.name}</h3>
-        <p class="product-description">${product.description}</p>
-        <div class="product-footer">
-          <span class="view-details-link">View Technical Specifications</span>
-          <span class="product-inquire-icon">📩</span>
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-in");
+          io.unobserve(e.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+  );
+  els.forEach((el) => io.observe(el));
+}
+
+/* ==========================================================================
+   PRODUCTS PAGE — filter chips, search, grid, modal
+   ========================================================================== */
+
+const fillStyle = (p: Product) =>
+  `position:absolute;inset:0;background:linear-gradient(152deg, ${p.g1}, ${p.g2})`;
+const figureOf = (p: Product) => String(PRODUCTS.indexOf(p) + 1).padStart(2, "0");
+const esc = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+function mountProducts(): void {
+  const root = document.getElementById("products-app");
+  if (!root) return;
+
+  const grid = root.querySelector<HTMLElement>("#product-grid")!;
+  const chipsWrap = root.querySelector<HTMLElement>("#product-chips")!;
+  const search = root.querySelector<HTMLInputElement>("#product-search")!;
+  const clearBtn = root.querySelector<HTMLButtonElement>("#search-clear")!;
+  const countEl = root.querySelector<HTMLElement>("#result-count")!;
+  const emptyEl = root.querySelector<HTMLElement>("#empty-state")!;
+  const resetBtn = root.querySelector<HTMLButtonElement>("#reset-filters")!;
+
+  const modal = document.getElementById("product-modal")!;
+
+  let cat = "all";
+  let q = "";
+
+  const filtered = (): Product[] => {
+    const query = q.trim().toLowerCase();
+    let list = PRODUCTS.filter((p) => cat === "all" || p.cat === cat);
+    if (query) {
+      list = list.filter((p) =>
+        (p.name + " " + p.catLabel + " " + p.forms.join(" ") + " " + p.hs + " " + p.desc)
+          .toLowerCase()
+          .includes(query)
+      );
+    }
+    return list;
+  };
+
+  const renderChips = () => {
+    chipsWrap.innerHTML = CATEGORIES.map((c) => {
+      const active = cat === c.id;
+      const count = c.id === "all" ? PRODUCTS.length : PRODUCTS.filter((p) => p.cat === c.id).length;
+      const base =
+        "display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 17px;border-radius:999px;cursor:pointer;transition:all .15s var(--ease-out);";
+      const skin = active
+        ? "background:var(--ocean-600);color:#fff;border:1px solid var(--ocean-600)"
+        : "background:#fff;color:var(--text-body);border:1px solid var(--border-default)";
+      return `<button data-cat="${c.id}" style="${base}${skin}">${esc(c.label)} <span style="opacity:.6">${count}</span></button>`;
+    }).join("");
+  };
+
+  const renderGrid = () => {
+    const list = filtered();
+    countEl.textContent = `${list.length} products`;
+    clearBtn.style.display = q ? "block" : "none";
+    if (!list.length) {
+      grid.innerHTML = "";
+      emptyEl.style.display = "block";
+      return;
+    }
+    emptyEl.style.display = "none";
+    grid.innerHTML = list
+      .map((p) => {
+        const formsLine = p.forms.join("  ·  ");
+        return `
+        <button class="pcard" data-id="${p.id}" style="display:flex;flex-direction:column;text-align:left;padding:0;border:1px solid var(--border-default);border-radius:18px;overflow:hidden;background:#fff;cursor:pointer">
+          <div style="position:relative;aspect-ratio:4/3;overflow:hidden">
+            <div style="${fillStyle(p)}"></div>
+            <div style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,.12) 1.1px, transparent 1.3px);background-size:13px 13px"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(5,20,31,.34), transparent 46%)"></div>
+            <span style="position:absolute;right:12px;top:-12px;font-family:var(--font-display);font-weight:700;font-size:74px;line-height:1;color:rgba(255,255,255,.2);letter-spacing:-.04em">${figureOf(p)}</span>
+            <span style="position:absolute;left:16px;top:14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.92)">${esc(p.catLabel)}</span>
+          </div>
+          <div style="padding:18px 20px 20px;display:flex;flex-direction:column;gap:9px;flex:1">
+            <span style="font-family:var(--font-display);font-weight:700;font-size:18px;line-height:1.18;color:var(--text-strong)">${esc(p.name)}</span>
+            <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)">${esc(formsLine)}</span>
+            <span style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ocean-700)">HS ${esc(p.hs)} · ${esc(p.moisture)}</span>
+          </div>
+        </button>`;
+      })
+      .join("");
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("open");
+    document.body.style.overflow = "";
+  };
+
+  const openModal = (id: string) => {
+    const p = PRODUCTS.find((x) => x.id === id);
+    if (!p) return;
+    const formsBadges = p.forms
+      .map((f) => `<span class="ve-badge ve-badge--sm ve-badge--info">${esc(f)}</span>`)
+      .join("");
+    const specRows = Object.entries(p.specs)
+      .map(
+        ([k, v]) => `<div style="display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border-subtle)">
+          <span style="font-family:var(--font-body);font-size:13.5px;color:var(--text-muted)">${esc(k)}</span>
+          <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--text-strong);text-align:right">${esc(v)}</span></div>`
+      )
+      .join("");
+    modal.querySelector(".pmodal__card")!.innerHTML = `
+      <button class="pmodal__close" aria-label="Close">&times;</button>
+      <div class="pmodal__grid">
+        <div class="pmodal__art">
+          <div style="${fillStyle(p)}"></div>
+          <div style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,.12) 1.2px, transparent 1.4px);background-size:15px 15px"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(5,20,31,.45), transparent 55%)"></div>
+          <span style="position:absolute;left:20px;top:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)">Fig. ${figureOf(p)} — ${esc(p.catLabel)}</span>
+          <span style="position:absolute;left:18px;bottom:-14px;font-family:var(--font-display);font-weight:700;font-size:120px;line-height:1;color:rgba(255,255,255,.2)">${figureOf(p)}</span>
         </div>
-      </div>
-    `;
-    
-    card.addEventListener('click', () => {
-      openProductModal(product);
-    });
-    
-    productsGrid.appendChild(card);
-  });
-}
+        <div style="padding:32px 34px 34px">
+          <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ocean-600)">${esc(p.catLabel)}</span>
+          <h3 style="font-family:var(--font-display);font-weight:700;font-size:28px;line-height:1.1;letter-spacing:-.01em;color:var(--text-strong);margin:8px 0 12px">${esc(p.name)}</h3>
+          <p style="font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--text-body);margin:0 0 22px">${esc(p.desc)}</p>
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px">Available forms</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px">${formsBadges}</div>
+          <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Technical specification</div>
+          <div style="border-top:1px solid var(--border-subtle);margin-bottom:24px">${specRows}</div>
+          <a class="ve-btn ve-btn--accent ve-btn--md ve-btn--block" href="contact.html">Request a quote for this product</a>
+        </div>
+      </div>`;
+    modal
+      .querySelector<HTMLButtonElement>(".pmodal__close")!
+      .addEventListener("click", closeModal);
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  };
 
-function filterAndRenderProducts() {
-  let filtered = products;
-  
-  // Category Filter
-  if (activeCategory !== 'all') {
-    filtered = filtered.filter(p => p.category === activeCategory);
-  }
-  
-  // Search query
-  if (searchQuery.trim() !== '') {
-    const query = searchQuery.toLowerCase().trim();
-    filtered = filtered.filter(p => {
-      const nameMatch = p.name.toLowerCase().includes(query);
-      const descMatch = p.description.toLowerCase().includes(query);
-      const formMatch = p.forms && p.forms.some(f => f.toLowerCase().includes(query));
-      const categoryMatch = categories.find(c => c.id === p.category)?.name.toLowerCase().includes(query);
-      return nameMatch || descMatch || formMatch || categoryMatch;
-    });
-  }
-  
-  renderProducts(filtered);
+  // events
+  chipsWrap.addEventListener("click", (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>("[data-cat]");
+    if (!btn) return;
+    cat = btn.dataset.cat!;
+    renderChips();
+    renderGrid();
+  });
+  grid.addEventListener("click", (e) => {
+    const card = (e.target as HTMLElement).closest<HTMLButtonElement>(".pcard");
+    if (card?.dataset.id) openModal(card.dataset.id);
+  });
+  search.addEventListener("input", () => {
+    q = search.value;
+    renderGrid();
+  });
+  clearBtn.addEventListener("click", () => {
+    q = "";
+    search.value = "";
+    renderGrid();
+  });
+  resetBtn.addEventListener("click", () => {
+    cat = "all";
+    q = "";
+    search.value = "";
+    renderChips();
+    renderGrid();
+  });
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.classList.contains("open")) closeModal();
+  });
+
+  renderChips();
+  renderGrid();
 }
 
 /* ==========================================================================
-   MODAL ACTIONS
+   CONTACT FORM
    ========================================================================== */
-function openProductModal(product: Product) {
-  modalImg.src = product.image;
-  modalImg.alt = product.name;
-  modalImg.onerror = () => { modalImg.src = '/images/products/dehydrated-onion.png'; };
-  
-  const catInfo = categories.find(c => c.id === product.category);
-  modalCat.textContent = catInfo ? `${catInfo.icon} ${catInfo.name}` : 'Product';
-  modalName.textContent = product.name;
-  modalDesc.textContent = product.description;
-  
-  // Render Forms chips
-  modalForms.innerHTML = '';
-  if (product.forms && product.forms.length > 0) {
-    product.forms.forEach(form => {
-      const chip = document.createElement('span');
-      chip.className = 'form-chip';
-      chip.textContent = form;
-      modalForms.appendChild(chip);
-    });
-    (modalForms.parentElement as HTMLElement).style.display = 'block';
-  } else {
-    (modalForms.parentElement as HTMLElement).style.display = 'none';
-  }
-  
-  // Render Specifications table
-  modalSpecs.innerHTML = '';
-  if (product.specs && Object.keys(product.specs).length > 0) {
-    Object.entries(product.specs).forEach(([key, val]) => {
-      const row = document.createElement('tr');
-      row.innerHTML = `
-        <td>${key}</td>
-        <td>${val}</td>
-      `;
-      modalSpecs.appendChild(row);
-    });
-  } else {
-    modalSpecs.innerHTML = '<tr><td colspan="2">Standard quality parameters comply with international export grades. Details available on request.</td></tr>';
-  }
-  
-  // Hook inquiry button inside modal
-  modalInquireBtn.href = `#contact`;
-  modalInquireBtn.onclick = (e) => {
+
+function mountContactForm(): void {
+  const form = document.getElementById("rfq-form") as HTMLFormElement | null;
+  if (!form) return;
+  const success = document.getElementById("rfq-success")!;
+  const again = document.getElementById("rfq-again");
+
+  form.addEventListener("submit", (e) => {
     e.preventDefault();
-    closeProductModal();
-    
-    // Set form category select option
-    const formInterest = document.getElementById('form-interest') as HTMLSelectElement;
-    if (formInterest) {
-      formInterest.value = product.category;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
     }
-    
-    // Fill specific item description in message box
-    const formMessage = document.getElementById('form-message') as HTMLTextAreaElement;
-    if (formMessage) {
-      formMessage.value = `We are interested in importing: ${product.name}.\nExpected volume: \nPackaging specs: \nDestination Port: `;
-      formMessage.focus();
-    }
-    
-    // Smooth scroll to contact
-    const contactSection = document.getElementById('contact');
-    if (contactSection) {
-      smoothScrollTo(contactSection);
-    }
-  };
-  
-  lastFocusedElement = document.activeElement as HTMLElement | null;
-  productModal.classList.add('visible');
-  productModal.setAttribute('aria-hidden', 'false');
-  document.body.style.overflow = 'hidden';
-  lenis?.stop();
-  modalCloseBtn.focus(); // move focus into the dialog
-}
-
-function closeProductModal() {
-  productModal.classList.remove('visible');
-  productModal.setAttribute('aria-hidden', 'true');
-  document.body.style.overflow = 'auto';
-  lenis?.start();
-  lastFocusedElement?.focus(); // return focus to the trigger
-}
-
-/* ==========================================================================
-   EVENT LISTENERS
-   ========================================================================== */
-function setupEventListeners() {
-  // Mobile nav drawer — visuals (hamburger -> X) are handled in CSS via the
-  // `.active` class; here we just keep state and ARIA in sync.
-  mobileToggle.addEventListener('click', () => {
-    setDrawer(!mobileToggle.classList.contains('active'));
+    form.style.display = "none";
+    success.style.display = "flex";
+    success.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 
-  // Close drawer when a navigation link inside it is clicked
-  // (the "Product Catalog" accordion button is excluded — it expands instead).
-  document.querySelectorAll('a.drawer-item').forEach(item => {
-    item.addEventListener('click', () => setDrawer(false));
-  });
-
-  // "Product Catalog" accordion toggle
-  const drawerToggle = document.getElementById('drawer-catalog-toggle');
-  const drawerCategories = document.getElementById('drawer-categories');
-  drawerToggle?.addEventListener('click', () => {
-    const open = drawerCategories?.classList.toggle('open') ?? false;
-    drawerToggle.setAttribute('aria-expanded', String(open));
-  });
-
-  // Close drawer with Escape
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileToggle.classList.contains('active')) {
-      setDrawer(false);
-    }
-  });
-
-  // Close modal click listeners
-  modalCloseBtn.addEventListener('click', closeProductModal);
-  productModal.addEventListener('click', (e) => {
-    if (e.target === productModal) {
-      closeProductModal();
-    }
-  });
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && productModal.classList.contains('visible')) {
-      closeProductModal();
-    }
-  });
-
-  // Trap Tab focus within the modal while it is open
-  productModal.addEventListener('keydown', (e) => {
-    if (e.key !== 'Tab') return;
-    const focusable = productModal.querySelectorAll<HTMLElement>(
-      'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    );
-    if (focusable.length === 0) return;
-    const first = focusable[0];
-    const last = focusable[focusable.length - 1];
-    if (e.shiftKey && document.activeElement === first) {
-      e.preventDefault();
-      last.focus();
-    } else if (!e.shiftKey && document.activeElement === last) {
-      e.preventDefault();
-      first.focus();
-    }
-  });
-
-  // Search input listeners
-  searchInput.addEventListener('input', (e) => {
-    searchQuery = (e.target as HTMLInputElement).value;
-    if (searchQuery.length > 0) {
-      searchClearBtn.classList.add('visible');
-    } else {
-      searchClearBtn.classList.remove('visible');
-    }
-    filterAndRenderProducts();
-  });
-
-  searchClearBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    searchQuery = '';
-    searchClearBtn.classList.remove('visible');
-    filterAndRenderProducts();
-    searchInput.focus();
-  });
-
-  // Reset filter empty state button
-  resetFiltersBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    searchQuery = '';
-    searchClearBtn.classList.remove('visible');
-    selectCategory('all');
-  });
-
-  // "All Products" chip
-  document.getElementById('btn-cat-all')?.addEventListener('click', () => selectCategory('all'));
-
-  // Scroll to Top Smoothly
-  scrollToTopBtn.addEventListener('click', () => {
-    smoothScrollTo(0);
-  });
-
-  // Lead Form submission
-  leadForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('form-submit-btn') as HTMLButtonElement;
-    submitBtn.textContent = 'Processing Export Inquiry...';
-    submitBtn.disabled = true;
-    
-    // Simulate API delay
-    setTimeout(() => {
-      submitBtn.textContent = 'Send B2B Inquiry';
-      submitBtn.disabled = false;
-      
-      // Show Success Modal/Overlay
-      formSuccessOverlay.classList.add('visible');
-    }, 1500);
-  });
-
-  successCloseBtn.addEventListener('click', () => {
-    formSuccessOverlay.classList.remove('visible');
-    leadForm.reset();
+  again?.addEventListener("click", () => {
+    form.reset();
+    success.style.display = "none";
+    form.style.display = "flex";
   });
 }
 
 /* ==========================================================================
-   SCROLL HANDLERS (navbar state, progress bar, scroll-top button, nav spy)
-   Consolidated into one rAF-throttled listener to avoid layout thrash.
+   BOOT
    ========================================================================== */
-function setupScrollHandlers() {
-  let ticking = false;
 
-  const update = () => {
-    const y = window.scrollY;
+const boot = () => {
+  mountChrome();
+  mountScrollTop();
+  mountReveal();
+  mountProducts();
+  mountContactForm();
+};
 
-    // Solid navbar + reveal the scroll-to-top button past the fold
-    navbar.classList.toggle('scrolled', y > 50);
-    scrollToTopBtn.classList.toggle('visible', y > 50);
-
-    // Reading progress bar
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    scrollProgress.style.width = (height > 0 ? (y / height) * 100 : 0) + '%';
-
-    // Active nav link (scroll spy)
-    highlightActiveNavItem();
-
-    ticking = false;
-  };
-
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      ticking = true;
-      requestAnimationFrame(update);
-    }
-  }, { passive: true });
-
-  update(); // set initial state on load
-}
-
-/* ==========================================================================
-   SCROLL REVEAL OBSERVER
-   ========================================================================== */
-function setupScrollReveal() {
-  const options = {
-    root: null,
-    threshold: 0.1,
-    rootMargin: '0px'
-  };
-  
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active');
-        observer.unobserve(entry.target);
-      }
-    });
-  }, options);
-  
-  document.querySelectorAll('.scroll-reveal').forEach(el => {
-    observer.observe(el);
-  });
-}
-
-/* ==========================================================================
-   STATISTICS COUNT UP ANIMATION
-   ========================================================================== */
-function setupStatsCounter() {
-  const statsSection = document.querySelector('.stats-section');
-  if (!statsSection) return;
-  
-  const options = {
-    root: null,
-    threshold: 0.5
-  };
-  
-  let animated = false;
-  
-  const observer = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && !animated) {
-        animated = true;
-        
-        document.querySelectorAll('.stat-number').forEach(stat => {
-          const target = parseInt(stat.getAttribute('data-target') || '0', 10);
-          const suffix = stat.getAttribute('data-suffix') || '';
-
-          // Skip the count-up animation for reduced-motion users
-          if (prefersReducedMotion) {
-            stat.textContent = target.toString() + suffix;
-            return;
-          }
-
-          const duration = 2000; // 2s duration
-          const startTime = performance.now();
-
-          function updateCounter(currentTime: number) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
-
-            // Ease out quad formula
-            const easeProgress = progress * (2 - progress);
-            const value = Math.floor(easeProgress * target);
-
-            stat.textContent = value.toString();
-
-            if (progress < 1) {
-              requestAnimationFrame(updateCounter);
-            } else {
-              stat.textContent = target.toString() + suffix;
-            }
-          }
-          
-          requestAnimationFrame(updateCounter);
-        });
-        
-        observer.unobserve(entry.target);
-      }
-    });
-  }, options);
-  
-  observer.observe(statsSection);
-}
-
-/* ==========================================================================
-   ACTIVE NAV LINK HIGHLIGHT (SCROLL SPY)
-   ========================================================================== */
-function highlightActiveNavItem() {
-  const sections = document.querySelectorAll('section[id]');
-  const scrollPosition = window.scrollY + 100; // offset for nav header
-  
-  let currentActiveId = 'home';
-  
-  sections.forEach(section => {
-    const sectionTop = (section as HTMLElement).offsetTop;
-    const sectionHeight = (section as HTMLElement).offsetHeight;
-    const sectionId = section.getAttribute('id');
-    
-    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-      currentActiveId = sectionId || 'home';
-    }
-  });
-  
-  // Update Header nav link active styles
-  document.querySelectorAll('.nav-menu .nav-item').forEach(item => {
-    item.classList.remove('active');
-    const href = item.getAttribute('href');
-    if (href === `#${currentActiveId}`) {
-      item.classList.add('active');
-    }
-  });
-
-  // Update Drawer nav link active styles
-  document.querySelectorAll('.mobile-drawer .drawer-item').forEach(item => {
-    item.classList.remove('active');
-    const href = item.getAttribute('href');
-    if (href === `#${currentActiveId}`) {
-      item.classList.add('active');
-    }
-  });
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", boot);
+} else {
+  boot();
 }

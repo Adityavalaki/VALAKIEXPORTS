@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/images/logo/logo-mark.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#03141F" />
+    <title>Product Catalog | Valaki Exports Co. — Dehydrated Foods & Spices</title>
+    <meta name="description" content="The full Valaki Exports portfolio — dehydrated onion, garlic, spices, chilli, vegetables, seeds, seasonings, preserved products and pastes. Filter by category or search by name, form or HS code." />
+    <meta name="robots" content="index, follow" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.cdnfonts.com/css/belwe-bd-bt" rel="stylesheet" />
+    <link href="https://db.onlinewebfonts.com/c/38d15e6783e73ca3b0c7c06f79ac7bc4?family=Belwe+W01+Condensed" rel="stylesheet" />
+  </head>
+  <body data-page="products">
+    <div id="site-nav"></div>
+
+    <main id="products-app">
+      <!-- PAGE HEADER -->
+      <section style="background:#fff;border-bottom:1px solid var(--border-subtle)">
+        <div class="wrap section-pad" style="padding:72px 32px 60px">
+          <span style="display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ocean-600);margin-bottom:16px"><span style="width:26px;height:2px;background:var(--ocean-600);border-radius:2px"></span>Product Catalog</span>
+          <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(36px,4.4vw,60px);line-height:1.05;letter-spacing:-.015em;color:var(--text-strong);margin:0 0 16px;max-width:760px">The full export portfolio.</h1>
+          <p style="font-family:var(--font-body);font-size:18px;line-height:1.6;color:var(--text-body);margin:0;max-width:560px">Filter by category or search by name, form or HS code. Every item ships to international export grade — full spec sheet on request.</p>
+        </div>
+      </section>
+
+      <!-- CONTROLS + GRID -->
+      <section class="wrap section-pad" style="padding:44px 32px 100px">
+        <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px">
+          <div style="position:relative;flex:1;min-width:260px;max-width:400px">
+            <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position:absolute;left:16px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+            <input id="product-search" class="searchinput" type="text" placeholder="Search products, forms, HS codes..." aria-label="Search products" style="width:100%;height:48px;padding:0 42px;border:1px solid var(--border-default);border-radius:999px;background:#fff;color:var(--text-strong);font-family:var(--font-body);font-size:15px" />
+            <button id="search-clear" aria-label="Clear search" style="display:none;position:absolute;right:14px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:22px;line-height:1;padding:4px">&times;</button>
+          </div>
+          <span id="result-count" style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)">28 products</span>
+        </div>
+
+        <div id="product-chips" style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:36px"></div>
+
+        <div id="empty-state" style="display:none;text-align:center;padding:90px 20px;border:1px dashed var(--border-default);border-radius:18px;background:#fff">
+          <p style="font-family:var(--font-display);font-weight:600;font-size:24px;color:var(--text-strong);margin:0 0 8px">No products match.</p>
+          <p style="font-family:var(--font-body);font-size:15px;color:var(--text-muted);margin:0 0 22px">Try a different category or clear your search.</p>
+          <button id="reset-filters" class="ve-btn ve-btn--outline ve-btn--md">Reset filters</button>
+        </div>
+
+        <div id="product-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:24px"></div>
+      </section>
+    </main>
+
+    <div id="site-footer"></div>
+
+    <!-- PRODUCT MODAL -->
+    <div class="pmodal" id="product-modal" role="dialog" aria-modal="true" aria-label="Product detail">
+      <div class="pmodal__card"></div>
+    </div>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
