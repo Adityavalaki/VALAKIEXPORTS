@@ -5,22 +5,8 @@ import { PRODUCTS, CATEGORIES, type Product } from "./products.ts";
    SHARED CHROME — top marquee + nav + footer, injected on every page
    ========================================================================== */
 
-const navMarqueeSeg = `
-  <span class="seg">
-    <span class="hl">Export-grade dehydrated foods</span><span class="sep">/</span>
-    <span>18 MT / day capacity</span><span class="sep">/</span>
-    <span>USFDA · ISO 22000 · HALAL · KOSHER · FSSAI</span><span class="sep">/</span>
-    <span>Shipping to 40+ countries</span><span class="sep">/</span>
-    <span class="hl">Since 1987 · Mahuva, Gujarat</span><span class="sep">/</span>
-  </span>`;
-
 const navHTML = `
 <header class="site-header">
-  <div class="topbar">
-    <div class="ve-marq" style="--dur:48s">
-      <div class="ve-marq__t">${navMarqueeSeg}${navMarqueeSeg}</div>
-    </div>
-  </div>
   <div class="navbar">
     <div class="navbar__inner">
       <a class="navbar__logo" href="index.html" aria-label="Valaki Exports Co. home">
