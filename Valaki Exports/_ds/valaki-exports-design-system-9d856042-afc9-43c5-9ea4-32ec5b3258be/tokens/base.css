@@ -1,0 +1,32 @@
+/* ============================================================
+   VALAKI EXPORTS — BASE ELEMENT STYLES
+   Minimal resets + sensible defaults wired to tokens.
+   ============================================================ */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  color: var(--text-body);
+  background: var(--surface-page);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  color: var(--text-strong);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  margin: 0;
+}
+
+code, pre, .ve-mono {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background: var(--ocean-300);
+  color: var(--deep-900);
+}

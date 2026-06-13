@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/valaki-exports-design-system-9d856042-afc9-43c5-9ea4-32ec5b3258be/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap">
+<script src="_ds/valaki-exports-design-system-9d856042-afc9-43c5-9ea4-32ec5b3258be/_ds_bundle.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  img{display:block}
+  ::selection{background:var(--ocean-600);color:#fff}
+  @keyframes ve-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ve-marq__t{animation:ve-marquee var(--dur,46s) linear infinite}
+  .ve-marq:hover .ve-marq__t{animation-play-state:paused}
+  .ve-btn--accent{color:#fff !important}
+  .navlink:hover{color:var(--ocean-600) !important}
+  .flink:hover{color:var(--ocean-300) !important}
+</style>
+</helmet>
+
+<div style="--action-accent:#1D85B8;--action-accent-hover:#2B9ACB;--action-accent-press:#136A96;--gold-500:#2B9ACB;--gold-400:#5FB4DA;--gold-300:#A9D3E8;--font-display:'Bricolage Grotesque','Space Grotesk',sans-serif;font-family:var(--font-body);background:#FBFCFD;color:var(--text-strong);overflow-x:hidden" id="top">
+
+  <dc-import name="Nav" hint-size="100%,108px"></dc-import>
+
+  <section style="background:#fff;border-bottom:1px solid var(--border-subtle)">
+    <div style="max-width:1280px;margin:0 auto;padding:72px 32px 60px">
+      <span style="display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ocean-600);margin-bottom:16px"><span style="width:26px;height:2px;background:var(--ocean-600);border-radius:2px"></span>Request a Quote</span>
+      <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(36px,4.4vw,60px);line-height:1.03;letter-spacing:-.025em;color:var(--text-strong);margin:0 0 16px;max-width:760px">Let's talk specs and volume.</h1>
+      <p style="font-family:var(--font-body);font-size:18px;line-height:1.6;color:var(--text-body);margin:0;max-width:560px">We supply FCL / LCL to importers, packers, manufacturers and HORECA. Our export desk replies with pricing and spec sheets within 24 hours.</p>
+    </div>
+  </section>
+
+  <section style="max-width:1280px;margin:0 auto;padding:72px 32px 100px">
+    <div style="display:grid;grid-template-columns:.82fr 1.18fr;gap:56px;align-items:start">
+      <div>
+        <div style="border-top:2px solid var(--ocean-600)">
+          <div style="padding:22px 0;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Plant &amp; office</div>
+            <div style="font-family:var(--font-body);font-size:16px;line-height:1.55;color:var(--text-strong)">Mahuva&ndash;Bhavnagar Highway, Mahuva 364290, Gujarat, India</div>
+          </div>
+          <div style="padding:22px 0;border-bottom:1px solid var(--border-subtle)">
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Export desk</div>
+            <div style="font-family:var(--font-body);font-size:16px;line-height:1.55;color:var(--text-strong)">+91 98765 43210<br/>export@valakiexports.com</div>
+          </div>
+          <div style="padding:22px 0">
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px">Capacity &amp; packing</div>
+            <div style="font-family:var(--font-body);font-size:16px;line-height:1.55;color:var(--text-strong)">18 MT / day &middot; 20 kg poly bag in carton (standard), retail pouches &amp; bulk on request</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;margin-top:24px">
+          <a href="https://wa.me/919876543210" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--text-strong);text-decoration:none;border:1px solid var(--border-default);border-radius:999px;padding:10px 18px">WhatsApp</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--font-body);font-weight:600;font-size:14px;color:var(--text-strong);text-decoration:none;border:1px solid var(--border-default);border-radius:999px;padding:10px 18px">LinkedIn</a>
+        </div>
+      </div>
+
+      <div style="position:relative;border:1px solid var(--border-default);border-radius:20px;background:#fff;padding:36px;box-shadow:var(--shadow-md)">
+        <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;align-items:center;text-align:center;padding:34px 10px">
+            <div style="width:58px;height:58px;border-radius:999px;background:var(--leaf-500);color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:18px"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"></path></svg></div>
+            <h3 style="font-family:var(--font-display);font-weight:700;font-size:24px;color:var(--text-strong);margin:0 0 8px">Inquiry received.</h3>
+            <p style="font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--text-muted);margin:0 0 22px;max-width:360px">An export manager has your request and will reply with pricing and spec sheets within 24 hours.</p>
+            <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Button" variant="outline" size="md" on-click="{{ resetForm }}" hint-size="auto,44px">Send another</x-import>
+          </div>
+        </sc-if>
+        <sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">
+          <form onSubmit="{{ submitForm }}" style="display:flex;flex-direction:column;gap:16px">
+            <h3 style="font-family:var(--font-display);font-weight:700;font-size:21px;color:var(--text-strong);margin:0 0 4px">Specification &amp; pricing request</h3>
+            <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Input" label="Full name" name="name" required="{{ true }}" placeholder="Jane Doe" hint-size="100%,72px"></x-import>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Input" label="Business email" name="email" type="email" required="{{ true }}" placeholder="you@company.com" hint-size="100%,72px"></x-import>
+              <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Input" label="Company" name="company" required="{{ true }}" placeholder="Global Foods Ltd." hint-size="100%,72px"></x-import>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+              <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Input" label="Destination country" name="country" required="{{ true }}" placeholder="Germany" hint-size="100%,72px"></x-import>
+              <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Select" label="Product" name="product" placeholder="Choose a category" options="{{ productOptions }}" hint-size="100%,72px"></x-import>
+            </div>
+            <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Input" label="Requirement" name="requirement" multiline="{{ true }}" placeholder="e.g. 5 MT white onion flakes, 8-15 mm, 20 kg bags, 1x20ft FCL, ex Mundra" hint-size="100%,116px"></x-import>
+            <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Button" variant="accent" size="lg" type="submit" full-width="{{ true }}" hint-size="100%,52px">Send B2B Inquiry</x-import>
+          </form>
+        </sc-if>
+      </div>
+    </div>
+  </section>
+
+  <dc-import name="Footer" hint-size="100%,430px"></dc-import>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { submitted: false };
+  renderVals() {
+    return {
+      submitted: this.state.submitted,
+      notSubmitted: !this.state.submitted,
+      submitForm: (e) => {
+        e.preventDefault();
+        const f = e.target;
+        if (f && f.checkValidity && !f.checkValidity()) { f.reportValidity(); return; }
+        this.setState({ submitted: true });
+      },
+      resetForm: () => this.setState({ submitted: false }),
+      productOptions: ["Dehydrated Onion", "Dehydrated Garlic", "Spices & Herbs", "Chilli Products", "Veg & Fruits", "Seeds & Cereals", "Seasonings", "Preserved", "Pastes"]
+    };
+  }
+}
+</script>
+</body>
+</html>

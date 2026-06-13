@@ -1,0 +1,108 @@
+/* ============================================================
+   VALAKI EXPORTS — COLOR SYSTEM
+   Anchored on the logo's two blues:
+     cerulean  #1D85B8  (logo stroke / wordmark)
+     sky       #A9D3E8  (logo fill)
+   Extended into a deep-ocean dark scale (futuristic surfaces)
+   and a harvest accent set drawn from the produce itself
+   (fried-onion gold, chilli ember, leaf green).
+   ============================================================ */
+:root {
+  /* ---- Base scale: ocean blues (brand axis) ---- */
+  --ocean-50:  #EFF8FC;
+  --ocean-100: #DCEFF8;
+  --ocean-200: #B9E0F0;
+  --ocean-300: #A9D3E8;   /* logo sky */
+  --ocean-400: #5FB4DA;
+  --ocean-500: #2B9ACB;
+  --ocean-600: #1D85B8;   /* logo cerulean — primary */
+  --ocean-700: #136A96;
+  --ocean-800: #0D4F72;
+  --ocean-900: #093A55;
+
+  /* ---- Deep scale: futuristic dark surfaces ---- */
+  --deep-700: #0B3A52;
+  --deep-800: #072A3E;
+  --deep-900: #051E2E;
+  --deep-950: #03141F;
+
+  /* ---- Harvest accents (the produce) ---- */
+  --gold-300: #FFD78A;
+  --gold-400: #F8BC57;
+  --gold-500: #EDA23A;   /* fried-onion gold — primary accent */
+  --gold-600: #C97F22;
+  --ember-500: #E0633C;  /* chilli ember */
+  --leaf-400: #5BC78F;
+  --leaf-500: #2FA873;   /* leaf green — freshness, success */
+
+  /* ---- Aurora (signature futuristic gradient stops) ---- */
+  --aurora-a: #2B9ACB;
+  --aurora-b: #46C8E0;
+  --aurora-c: #5BC78F;
+
+  /* ---- Warm paper / ink (editorial "raw" surface world) ---- */
+  --bone-50:  #F6F0E4;   /* warm paper — primary editorial canvas */
+  --bone-100: #EFE7D6;
+  --bone-200: #E4D8C0;   /* warm hairline / divider on paper */
+  --bone-300: #D6C6A6;
+  --ink-900:  #14120D;   /* near-black warm ink — editorial text/blocks */
+  --ink-700:  #3A352B;
+  --ink-500:  #6A6253;
+
+  /* ---- Neutrals (cool, blue-cast) ---- */
+  --neutral-0:   #FFFFFF;
+  --neutral-50:  #F4F8FA;
+  --neutral-100: #E8EFF3;
+  --neutral-200: #D3DFE6;
+  --neutral-400: #92A8B4;
+  --neutral-500: #64808F;
+  --neutral-600: #46606F;
+  --neutral-800: #1E3340;
+
+  /* ---- Semantic: light context (docs, cards) ---- */
+  --surface-page:    var(--neutral-50);
+  --surface-card:    var(--neutral-0);
+  --surface-sunken:  var(--neutral-100);
+  --surface-brand-tint: var(--ocean-50);
+  --text-strong:  #07212F;
+  --text-body:    #25404E;
+  --text-muted:   var(--neutral-500);
+  --text-on-dark: #EAF5FB;
+  --text-on-dark-muted: #8FB4C6;
+  --border-subtle: var(--neutral-100);
+  --border-default: var(--neutral-200);
+  --border-strong: var(--neutral-400);
+
+  /* ---- Semantic: editorial paper world ---- */
+  --surface-paper:   var(--bone-50);
+  --surface-paper-2: var(--bone-100);
+  --text-ink:        var(--ink-900);
+  --text-ink-soft:   var(--ink-700);
+  --border-paper:    var(--bone-200);
+
+  /* ---- Semantic: dark context (hero, futuristic surfaces) ---- */
+  --surface-deep:      var(--deep-950);
+  --surface-deep-card: rgba(13, 79, 114, 0.22);
+  --border-on-deep:    rgba(95, 180, 218, 0.22);
+  --glow-on-deep:      rgba(70, 200, 224, 0.35);
+
+  /* ---- Semantic: actions ---- */
+  --action-primary:        var(--ocean-600);
+  --action-primary-hover:  var(--ocean-500);
+  --action-primary-press:  var(--ocean-700);
+  --action-accent:         var(--gold-500);
+  --action-accent-hover:   var(--gold-400);
+  --action-accent-press:   var(--gold-600);
+  --focus-ring: rgba(43, 154, 203, 0.45);
+
+  /* ---- Semantic: status ---- */
+  --status-success: var(--leaf-500);
+  --status-warning: var(--gold-500);
+  --status-danger:  #D64533;
+  --status-info:    var(--ocean-500);
+
+  /* ---- Gradients ---- */
+  --gradient-aurora: linear-gradient(100deg, var(--aurora-a), var(--aurora-b) 55%, var(--aurora-c));
+  --gradient-deep-sea: linear-gradient(180deg, var(--deep-800), var(--deep-950));
+  --gradient-gold: linear-gradient(100deg, var(--gold-400), var(--ember-500));
+}

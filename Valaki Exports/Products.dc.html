@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/valaki-exports-design-system-9d856042-afc9-43c5-9ea4-32ec5b3258be/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&display=swap">
+<script src="_ds/valaki-exports-design-system-9d856042-afc9-43c5-9ea4-32ec5b3258be/_ds_bundle.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  img{display:block}
+  ::selection{background:var(--ocean-600);color:#fff}
+  @keyframes ve-marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ve-marq__t{animation:ve-marquee var(--dur,46s) linear infinite}
+  .ve-marq:hover .ve-marq__t{animation-play-state:paused}
+  .ve-btn--accent{color:#fff !important}
+  .navlink:hover{color:var(--ocean-600) !important}
+  .flink:hover{color:var(--ocean-300) !important}
+  .pcard{transition:transform .28s cubic-bezier(.16,1,.3,1),box-shadow .28s cubic-bezier(.16,1,.3,1),border-color .28s}
+  .pcard:hover{transform:translateY(-5px);box-shadow:0 20px 44px rgba(7,33,47,.16);border-color:var(--border-strong)}
+  .searchinput:focus{outline:none;border-color:var(--ocean-500) !important;box-shadow:0 0 0 3px var(--focus-ring)}
+</style>
+</helmet>
+
+<div style="--action-accent:#1D85B8;--action-accent-hover:#2B9ACB;--action-accent-press:#136A96;--gold-500:#2B9ACB;--gold-400:#5FB4DA;--gold-300:#A9D3E8;--font-display:'Bricolage Grotesque','Space Grotesk',sans-serif;font-family:var(--font-body);background:#FBFCFD;color:var(--text-strong);overflow-x:hidden" id="top">
+
+  <dc-import name="Nav" hint-size="100%,108px"></dc-import>
+
+  <!-- ============ PAGE HEADER ============ -->
+  <section style="background:#fff;border-bottom:1px solid var(--border-subtle)">
+    <div style="max-width:1280px;margin:0 auto;padding:72px 32px 60px">
+      <span style="display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ocean-600);margin-bottom:16px"><span style="width:26px;height:2px;background:var(--ocean-600);border-radius:2px"></span>Product Catalog</span>
+      <h1 style="font-family:var(--font-display);font-weight:700;font-size:clamp(36px,4.4vw,60px);line-height:1.03;letter-spacing:-.025em;color:var(--text-strong);margin:0 0 16px;max-width:760px">The full export portfolio.</h1>
+      <p style="font-family:var(--font-body);font-size:18px;line-height:1.6;color:var(--text-body);margin:0;max-width:560px">Filter by category or search by name, form or HS code. Every item ships to international export grade &mdash; full spec sheet on request.</p>
+    </div>
+  </section>
+
+  <!-- ============ CONTROLS + GRID ============ -->
+  <section style="max-width:1280px;margin:0 auto;padding:44px 32px 100px">
+    <div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px">
+      <div style="position:relative;flex:1;min-width:260px;max-width:400px">
+        <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="var(--text-muted)" stroke-width="2" style="position:absolute;left:16px;top:50%;transform:translateY(-50%)"><circle cx="11" cy="11" r="7"></circle><path d="M21 21l-4.3-4.3"></path></svg>
+        <input class="searchinput" type="text" placeholder="Search products, forms, HS codes..." value="{{ query }}" onInput="{{ onSearch }}" aria-label="Search products" style="width:100%;height:48px;padding:0 42px;border:1px solid var(--border-default);border-radius:999px;background:#fff;color:var(--text-strong);font-family:var(--font-body);font-size:15px" />
+        <sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ clearSearch }}" aria-label="Clear" style="position:absolute;right:14px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--text-muted);font-size:22px;line-height:1;padding:4px">&times;</button>
+        </sc-if>
+      </div>
+      <span style="font-family:var(--font-mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)">{{ resultCount }} products</span>
+    </div>
+
+    <div style="display:flex;flex-wrap:wrap;gap:9px;margin-bottom:36px">
+      <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="10">
+        <button onClick="{{ chip.onClick }}" style="{{ chip.style }}">{{ chip.label }} <span style="opacity:.6">{{ chip.count }}</span></button>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ isEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="text-align:center;padding:90px 20px;border:1px dashed var(--border-default);border-radius:18px;background:#fff">
+        <p style="font-family:var(--font-display);font-weight:600;font-size:24px;color:var(--text-strong);margin:0 0 8px">No products match.</p>
+        <p style="font-family:var(--font-body);font-size:15px;color:var(--text-muted);margin:0 0 22px">Try a different category or clear your search.</p>
+        <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Button" variant="outline" size="md" on-click="{{ resetFilters }}" hint-size="auto,44px">Reset filters</x-import>
+      </div>
+    </sc-if>
+    <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(264px,1fr));gap:24px">
+        <sc-for list="{{ plates }}" as="item" hint-placeholder-count="8">
+          <button class="pcard" onClick="{{ item.open }}" style="display:flex;flex-direction:column;text-align:left;padding:0;border:1px solid var(--border-default);border-radius:18px;overflow:hidden;background:#fff;cursor:pointer">
+            <div style="position:relative;aspect-ratio:4/3;overflow:hidden">
+              <div style="{{ item.fill }}"></div>
+              <div style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,.12) 1.1px, transparent 1.3px);background-size:13px 13px"></div>
+              <div style="position:absolute;inset:0;background:linear-gradient(to bottom, rgba(5,20,31,.34), transparent 46%)"></div>
+              <span style="position:absolute;right:12px;top:-12px;font-family:var(--font-display);font-weight:700;font-size:74px;line-height:1;color:rgba(255,255,255,.2);letter-spacing:-.04em">{{ item.figure }}</span>
+              <span style="position:absolute;left:16px;top:14px;font-family:var(--font-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.92)">{{ item.catShort }}</span>
+            </div>
+            <div style="padding:18px 20px 20px;display:flex;flex-direction:column;gap:9px;flex:1">
+              <span style="font-family:var(--font-display);font-weight:700;font-size:18px;line-height:1.18;color:var(--text-strong)">{{ item.name }}</span>
+              <span style="font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted)">{{ item.formsLine }}</span>
+              <span style="margin-top:auto;padding-top:12px;border-top:1px solid var(--border-subtle);font-family:var(--font-mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--ocean-700)">HS {{ item.hs }} &middot; {{ item.moisture }}</span>
+            </div>
+          </button>
+        </sc-for>
+      </div>
+    </sc-if>
+  </section>
+
+  <dc-import name="Footer" hint-size="100%,430px"></dc-import>
+
+  <!-- ============ MODAL ============ -->
+  <sc-if value="{{ hasModal }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ backdropClose }}" style="position:fixed;inset:0;z-index:100;background:rgba(5,20,31,.55);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;padding:24px">
+      <div style="position:relative;width:100%;max-width:880px;max-height:88vh;overflow:auto;background:#fff;border-radius:20px;box-shadow:0 40px 90px rgba(5,20,31,.5)">
+        <button onClick="{{ closeProduct }}" aria-label="Close" style="position:absolute;right:16px;top:16px;z-index:2;width:38px;height:38px;border-radius:999px;border:1px solid var(--border-default);background:#fff;cursor:pointer;font-size:21px;line-height:1;color:var(--text-strong);display:flex;align-items:center;justify-content:center">&times;</button>
+        <div style="display:grid;grid-template-columns:1fr 1.2fr">
+          <div style="position:relative;min-height:320px;overflow:hidden">
+            <div style="{{ modal.fill }}"></div>
+            <div style="position:absolute;inset:0;background-image:radial-gradient(circle, rgba(255,255,255,.12) 1.2px, transparent 1.4px);background-size:15px 15px"></div>
+            <div style="position:absolute;inset:0;background:linear-gradient(to top, rgba(5,20,31,.45), transparent 55%)"></div>
+            <span style="position:absolute;left:20px;top:16px;font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.9)">Fig. {{ modal.figure }} &mdash; {{ modal.catShort }}</span>
+            <span style="position:absolute;left:18px;bottom:-14px;font-family:var(--font-display);font-weight:700;font-size:120px;line-height:1;color:rgba(255,255,255,.2)">{{ modal.figure }}</span>
+          </div>
+          <div style="padding:32px 34px 34px">
+            <span style="font-family:var(--font-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ocean-600)">{{ modal.catShort }}</span>
+            <h3 style="font-family:var(--font-display);font-weight:700;font-size:28px;line-height:1.1;letter-spacing:-.01em;color:var(--text-strong);margin:8px 0 12px">{{ modal.name }}</h3>
+            <p style="font-family:var(--font-body);font-size:15px;line-height:1.6;color:var(--text-body);margin:0 0 22px">{{ modal.desc }}</p>
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:9px">Available forms</div>
+            <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:24px">
+              <sc-for list="{{ modal.formsArr }}" as="f" hint-placeholder-count="3">
+                <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Badge" tone="info" size="sm" hint-size="auto,22px">{{ f }}</x-import>
+              </sc-for>
+            </div>
+            <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Technical specification</div>
+            <div style="border-top:1px solid var(--border-subtle);margin-bottom:24px">
+              <sc-for list="{{ modal.specsRows }}" as="row" hint-placeholder-count="4">
+                <div style="display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--border-subtle)">
+                  <span style="font-family:var(--font-body);font-size:13.5px;color:var(--text-muted)">{{ row.k }}</span>
+                  <span style="font-family:var(--font-mono);font-size:12.5px;color:var(--text-strong);text-align:right">{{ row.v }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <x-import component-from-global-scope="ValakiExportsDesignSystem_9d8560.Button" variant="accent" size="md" href="Contact.dc.html" full-width="{{ true }}" hint-size="100%,44px">Request a quote for this product</x-import>
+          </div>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { cat: "all", q: "", modalId: null };
+
+  data() {
+    return [
+      { id: "onion-white", name: "White Onion Flakes", cat: "onion", catLabel: "Dehydrated Onion", g1: "#EFE7D2", g2: "#CDBB8E", hs: "0712.20.00", moisture: "Moisture \u2264 5%", forms: ["Flakes", "Minced", "Granules", "Powder"], desc: "Fresh white onions dehydrated to lock in natural sweetness and pungency. Built for soups, sauces, canned and convenience foods.", specs: { "Moisture": "Max 5.0%", "Hot Water Insoluble": "Max 20%", "Total Ash": "Max 4.0%", "Acid Insoluble Ash": "Max 0.5%", "Size": "8\u201315 mm flakes" } },
+      { id: "onion-red", name: "Red Onion Flakes", cat: "onion", catLabel: "Dehydrated Onion", g1: "#B23A2C", g2: "#7A1C12", hs: "0712.20.00", moisture: "Moisture \u2264 5%", forms: ["Flakes", "Chopped", "Granules", "Powder"], desc: "Premium red onions processed to hold signature colour and sharp taste. Popular in salads, dry mixes and seasoning blends.", specs: { "Moisture": "Max 5.0%", "Total Ash": "Max 4.5%", "Acid Insoluble Ash": "Max 0.5%", "Colour": "Reddish purple" } },
+      { id: "onion-pink", name: "Pink Onion Flakes", cat: "onion", catLabel: "Dehydrated Onion", g1: "#CE7E72", g2: "#9E4A40", hs: "0712.20.00", moisture: "Moisture \u2264 5%", forms: ["Flakes", "Granules", "Powder"], desc: "A balanced, cost-effective profile \u2014 the Mahuva speciality \u2014 ideal for bulk seasoning manufacture.", specs: { "Moisture": "Max 5.0%", "Total Ash": "Max 4.0%", "Colour": "Light pink / tan" } },
+      { id: "onion-fried", name: "Crispy Fried Onion", cat: "onion", catLabel: "Dehydrated Onion", g1: "#E0A33C", g2: "#A1540F", hs: "2003.90.10", moisture: "Moisture \u2264 3%", forms: ["Crispy", "Golden"], desc: "Sunflower-fried to a golden, crisp texture. Rich caramel onion notes and crunch, ready to top.", specs: { "Moisture": "Max 3.0%", "Oil Content": "20\u201325%", "Shelf Life": "12 months" } },
+      { id: "garlic-flakes", name: "Garlic Flakes / Cloves", cat: "garlic", catLabel: "Dehydrated Garlic", g1: "#E9E1CE", g2: "#C8B98F", hs: "0712.90.40", moisture: "Moisture \u2264 5.5%", forms: ["Flakes", "Minced", "Granules", "Powder"], desc: "High-pungency local garlic, the signature kick of fresh garlic without the peeling. A food-industry staple.", specs: { "Moisture": "Max 5.5%", "Total Ash": "Max 4.0%", "Acid Insoluble Ash": "Max 0.5%", "Colour": "Creamy white" } },
+      { id: "garlic-powder", name: "Garlic Powder", cat: "garlic", catLabel: "Dehydrated Garlic", g1: "#ECE6D6", g2: "#CDBF99", hs: "0712.90.40", moisture: "Moisture \u2264 5%", forms: ["Fine powder (100 mesh)"], desc: "Super-fine, high-dissolvability garlic powder for seasonings, soup bases and snack coatings.", specs: { "Moisture": "Max 5.0%", "Ash Content": "Max 4.5%", "Particle Size": "95% through 100 mesh" } },
+      { id: "garlic-minced", name: "Garlic Minced", cat: "garlic", catLabel: "Dehydrated Garlic", g1: "#E6DCC4", g2: "#C2B083", hs: "0712.90.40", moisture: "Moisture \u2264 5%", forms: ["Minced 1\u20133 mm"], desc: "Minced particles for even dispersion in sausages, dry rubs, herb butter and marinades.", specs: { "Moisture": "Max 5.0%", "Colour": "Creamy white", "Size": "10/20 mesh" } },
+      { id: "turmeric", name: "Turmeric Powder", cat: "spice", catLabel: "Spices & Herbs", g1: "#E5A52A", g2: "#B6760D", hs: "0910.30.20", moisture: "Moisture \u2264 9%", forms: ["Whole fingers", "Powder"], desc: "Vibrant high-curcumin turmeric for brilliant colour and antioxidant value in food and nutraceuticals.", specs: { "Curcumin": "3.0\u20135.5%", "Moisture": "Max 9.0%", "Total Ash": "Max 7.0%" } },
+      { id: "cumin", name: "Cumin Seeds & Powder", cat: "spice", catLabel: "Spices & Herbs", g1: "#B07A36", g2: "#7C521F", hs: "0909.31.00", moisture: "Moisture \u2264 8%", forms: ["Whole seeds", "Powder"], desc: "Aromatic, earthy cumin, machine colour-sorted to Singapore / Europe grade.", specs: { "Purity": "99\u201399.5%", "Moisture": "Max 8.0%", "Volatile Oil": "Min 1.5%" } },
+      { id: "coriander", name: "Coriander Seeds & Powder", cat: "spice", catLabel: "Spices & Herbs", g1: "#A89A4A", g2: "#76692B", hs: "0909.21.00", moisture: "Moisture \u2264 9%", forms: ["Eagle / Badami", "Powder"], desc: "Sweet, citrusy coriander in Eagle and Badami grades, cleaned and moisture-protected.", specs: { "Moisture": "Max 9.0%", "Total Ash": "Max 6.0%", "Purity": "98.5\u201399%" } },
+      { id: "basil", name: "Dry Basil Leaves", cat: "spice", catLabel: "Spices & Herbs", g1: "#4E9E66", g2: "#27623C", hs: "1211.90.99", moisture: "Moisture \u2264 8%", forms: ["Rubbed leaves"], desc: "Fragrant, shade-dried basil that holds its essential oils \u2014 for Italian pre-mixes and pasta sauces.", specs: { "Moisture": "Max 8.0%", "Colour": "Deep green" } },
+      { id: "chilli-flakes", name: "Red Chilli Flakes", cat: "chilli", catLabel: "Chilli Products", g1: "#C2402A", g2: "#841F12", hs: "0904.22.11", moisture: "Moisture \u2264 8.5%", forms: ["Coarse flakes"], desc: "Coarsely crushed red chilli for table dispensers, pizza toppings and visible-flake blends.", specs: { "Pungency": "15,000\u201340,000 SHU", "Moisture": "Max 8.5%", "Seed Content": "Customisable" } },
+      { id: "chilli-powder", name: "Red Chilli Powder", cat: "chilli", catLabel: "Chilli Products", g1: "#C23A28", g2: "#7E1C12", hs: "0904.22.12", moisture: "Moisture \u2264 9%", forms: ["Fine powder"], desc: "Finely ground chilli with rich colour and controllable heat, formulated to EU microbiological limits.", specs: { "Pungency": "20,000\u201380,000 SHU", "Colour (ASTA)": "60\u2013120", "Moisture": "Max 9.0%" } },
+      { id: "chilli-whole", name: "Whole Dry Red Chilli", cat: "chilli", catLabel: "Chilli Products", g1: "#A82E1C", g2: "#6C160C", hs: "0904.21.10", moisture: "Moisture \u2264 10%", forms: ["Teja S17", "Sanam S4", "Byadgi"], desc: "Direct-from-farm dried chilli \u2014 Teja for heat, Sanam for medium, Byadgi for deep colour.", specs: { "Moisture": "Max 10%", "Quality": "A grade, mould-free" } },
+      { id: "potato", name: "Potato Flakes", cat: "veg", catLabel: "Veg & Fruits", g1: "#E3D7B4", g2: "#BFAA78", hs: "0712.90.05", moisture: "Moisture \u2264 6.5%", forms: ["Flakes"], desc: "High-starch potato flakes for instant mash, snacks and as a soup thickener.", specs: { "Moisture": "Max 6.5%", "Reducing Sugars": "Low", "Rehydration": "Excellent" } },
+      { id: "beetroot", name: "Beetroot Flakes & Powder", cat: "veg", catLabel: "Veg & Fruits", g1: "#8E3357", g2: "#561B33", hs: "0712.90.90", moisture: "Moisture \u2264 6%", forms: ["Flakes", "Powder"], desc: "Sweet dried beetroot; the powder is a clean-label natural red colourant.", specs: { "Moisture": "Max 6.0%", "Colour": "Deep crimson", "Purity": "100% natural" } },
+      { id: "spinach", name: "Spinach Leaves & Powder", cat: "veg", catLabel: "Veg & Fruits", g1: "#3C8A55", g2: "#1F4E32", hs: "0712.90.90", moisture: "Moisture \u2264 7%", forms: ["Flakes", "Powder"], desc: "Sanitised, colour-retentive spinach for green noodles, pasta and baby foods.", specs: { "Moisture": "Max 7.0%", "Purity": "99% leaf content" } },
+      { id: "moringa", name: "Moringa Leaf Powder", cat: "veg", catLabel: "Veg & Fruits", g1: "#5AA85F", g2: "#2E6B38", hs: "1211.90.99", moisture: "Moisture \u2264 8%", forms: ["Whole leaves", "Fine powder"], desc: "Nutrient-dense superfood, shade-dried and milled for supplement and functional-food markets.", specs: { "Moisture": "Max 8.0%", "Colour": "Bright green", "Micro": "E.coli / Salmonella negative" } },
+      { id: "mango", name: "Spray-Dried Mango Powder", cat: "veg", catLabel: "Veg & Fruits", g1: "#E6A93A", g2: "#BC7A16", hs: "0804.50.40", moisture: "Moisture \u2264 4%", forms: ["Free-flowing powder"], desc: "Ripe Alphonso / Totapuri pulp spray-dried to keep its sweet-tangy taste.", specs: { "Solubility": "Instant", "Moisture": "Max 4.0%", "Carrier": "Maltodextrin" } },
+      { id: "sesame", name: "Sesame Seeds", cat: "seed", catLabel: "Seeds & Cereals", g1: "#E9E1CD", g2: "#C9BB92", hs: "1207.40.90", moisture: "Moisture \u2264 6%", forms: ["Natural", "Hulled", "Black"], desc: "Sortex-cleaned to 99.99% purity for bakery and confectionery markets.", specs: { "Purity": "99.9\u201399.99%", "Admixture": "Max 0.01%", "FFA": "Max 1.5%" } },
+      { id: "peanut", name: "Groundnut / Peanuts", cat: "seed", catLabel: "Seeds & Cereals", g1: "#C8A772", g2: "#9C7A44", hs: "1202.42.20", moisture: "Moisture \u2264 7%", forms: ["Bold 40/50", "Java 60/70"], desc: "Crunchy, sweet peanuts graded by count and tested for aflatoxin to EU standards.", specs: { "Aflatoxin": "Max 4 ppb (EU)", "Moisture": "Max 7.0%" } },
+      { id: "millet", name: "Green Millet (Bajra)", cat: "seed", catLabel: "Seeds & Cereals", g1: "#DEC265", g2: "#B49636", hs: "1008.21.10", moisture: "Moisture \u2264 12%", forms: ["Whole grain"], desc: "High-energy Gujarat millet, cleaned and graded for feed and human consumption.", specs: { "Purity": "99%", "Moisture": "Max 12%", "Foreign Matter": "Max 1.0%" } },
+      { id: "curry", name: "Madras Curry Powder", cat: "season", catLabel: "Seasonings", g1: "#C68829", g2: "#8F5E18", hs: "0910.91.00", moisture: "Moisture \u2264 8%", forms: ["Powder"], desc: "Traditional blend of turmeric, coriander, cumin, fenugreek and chilli \u2014 formula to your recipe.", specs: { "Moisture": "Max 8.0%", "Formula": "Customisable" } },
+      { id: "garam", name: "Garam Masala Blend", cat: "season", catLabel: "Seasonings", g1: "#8C5A30", g2: "#5A3819", hs: "0910.91.00", moisture: "Moisture \u2264 8%", forms: ["Powder"], desc: "A warm blend of pepper, clove, cinnamon, cardamom and cumin, ground to spec.", specs: { "Aroma": "Warm, highly aromatic", "Formula": "Customisable" } },
+      { id: "silverskin", name: "Silverskin Onion in Brine", cat: "preserved", catLabel: "Preserved", g1: "#A9D3E8", g2: "#5FB4DA", hs: "2001.10.00", moisture: "pH controlled", forms: ["Whole in liquid"], desc: "Crunchy, sweet-tangy silverskin onions preserved under controlled pH for pickle and cocktail brands.", specs: { "Acidity": "1.5\u20132.5%", "Salt": "Per spec", "Size": "18\u201328 mm" } },
+      { id: "ginger-preserved", name: "Preserved Ginger", cat: "preserved", catLabel: "Preserved", g1: "#D6C078", g2: "#B09744", hs: "2008.99.00", moisture: "pH controlled", forms: ["Sliced", "Whole"], desc: "Fresh ginger sanitised and preserved in food-grade acid, keeping its spicy crunch.", specs: { "Acidity": "Adjustable", "Salt": "Adjustable" } },
+      { id: "garlic-paste", name: "Culinary Garlic Paste", cat: "paste", catLabel: "Pastes", g1: "#E2D8C0", g2: "#BEAE85", hs: "2103.90.40", moisture: "Shelf stable", forms: ["Smooth paste"], desc: "Ready-to-use garlic paste from selected peeled cloves, retaining volatile oils.", specs: { "Solids (TSS)": "Min 25%", "pH": "3.8\u20134.2", "Preservatives": "Per destination" } },
+      { id: "gg-paste", name: "Ginger Garlic Paste", cat: "paste", catLabel: "Pastes", g1: "#CCB587", g2: "#A28C58", hs: "2103.90.40", moisture: "Shelf stable", forms: ["50:50 blend", "60:40 blend"], desc: "Balanced ginger-garlic paste for kitchens, HORECA and home pre-mixes.", specs: { "pH": "3.9\u20134.3", "Shelf Life": "12 months" } }
+    ];
+  }
+
+  cats() {
+    return [
+      { id: "all", label: "All Products" }, { id: "onion", label: "Onion" }, { id: "garlic", label: "Garlic" },
+      { id: "spice", label: "Spices & Herbs" }, { id: "chilli", label: "Chilli" }, { id: "veg", label: "Veg & Fruits" },
+      { id: "seed", label: "Seeds & Cereals" }, { id: "season", label: "Seasonings" }, { id: "preserved", label: "Preserved" }, { id: "paste", label: "Pastes" }
+    ];
+  }
+
+  openProduct(id) { this.setState({ modalId: id }); if (typeof document !== "undefined") document.body.style.overflow = "hidden"; }
+  closeProduct() { this.setState({ modalId: null }); if (typeof document !== "undefined") document.body.style.overflow = ""; }
+
+  renderVals() {
+    const all = this.data();
+    const q = (this.state.q || "").trim().toLowerCase();
+    const setCat = (id) => this.setState({ cat: id });
+    const open = (id) => this.openProduct(id);
+
+    let filtered = all.filter((p) => this.state.cat === "all" || p.cat === this.state.cat);
+    if (q) filtered = filtered.filter((p) => (p.name + " " + p.catLabel + " " + (p.forms || []).join(" ") + " " + p.hs + " " + p.desc).toLowerCase().includes(q));
+
+    const fillFor = (p) => ({ position: "absolute", inset: 0, background: "linear-gradient(152deg, " + p.g1 + ", " + p.g2 + ")" });
+
+    const plates = filtered.map((p) => ({
+      name: p.name, catShort: p.catLabel, hs: p.hs, moisture: p.moisture,
+      formsLine: (p.forms || []).join("  \u00b7  "), figure: String(all.indexOf(p) + 1).padStart(2, "0"),
+      fill: fillFor(p), open: () => open(p.id)
+    }));
+
+    const chips = this.cats().map((c) => {
+      const active = this.state.cat === c.id;
+      const count = c.id === "all" ? all.length : all.filter((p) => p.cat === c.id).length;
+      return {
+        label: c.label, count: count, onClick: () => setCat(c.id),
+        style: "display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:10px 17px;border-radius:999px;cursor:pointer;transition:all .15s var(--ease-out);" +
+          (active ? "background:var(--ocean-600);color:#fff;border:1px solid var(--ocean-600)" : "background:#fff;color:var(--text-body);border:1px solid var(--border-default)")
+      };
+    });
+
+    const mp = all.find((p) => p.id === this.state.modalId) || null;
+    const modal = mp ? {
+      name: mp.name, catShort: mp.catLabel, desc: mp.desc, figure: String(all.indexOf(mp) + 1).padStart(2, "0"),
+      fill: fillFor(mp), formsArr: mp.forms || [], specsRows: Object.entries(mp.specs || {}).map(([k, v]) => ({ k: k, v: v }))
+    } : null;
+
+    return {
+      plates, chips, query: this.state.q, hasQuery: (this.state.q || "").length > 0,
+      resultCount: filtered.length, isEmpty: filtered.length === 0, hasResults: filtered.length > 0,
+      onSearch: (e) => this.setState({ q: e.target.value }), clearSearch: () => this.setState({ q: "" }), resetFilters: () => this.setState({ cat: "all", q: "" }),
+      hasModal: !!modal, modal: modal, closeProduct: () => this.closeProduct(),
+      backdropClose: (e) => { if (e.target === e.currentTarget) this.closeProduct(); }
+    };
+  }
+}
+</script>
+</body>
+</html>

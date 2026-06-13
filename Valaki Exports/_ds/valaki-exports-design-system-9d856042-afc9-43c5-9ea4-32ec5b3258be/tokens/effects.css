@@ -1,0 +1,31 @@
+/* ============================================================
+   VALAKI EXPORTS — RADII, SHADOWS, GLOWS, BLUR
+   ============================================================ */
+:root {
+  /* Corner radii — generous, capsule-friendly */
+  --radius-xs: 6px;
+  --radius-sm: 10px;
+  --radius-md: 14px;     /* default card */
+  --radius-lg: 20px;     /* feature card */
+  --radius-xl: 28px;     /* hero panels */
+  --radius-pill: 999px;  /* buttons, chips, badges */
+
+  /* Shadows — cool-cast, soft */
+  --shadow-xs: 0 1px 2px rgba(7, 33, 47, 0.06);
+  --shadow-sm: 0 2px 8px rgba(7, 33, 47, 0.08);
+  --shadow-md: 0 8px 24px rgba(7, 33, 47, 0.10);
+  --shadow-lg: 0 20px 48px rgba(7, 33, 47, 0.16);
+
+  /* Glows — futuristic accents on deep surfaces */
+  --glow-cyan: 0 0 24px rgba(70, 200, 224, 0.35);
+  --glow-gold: 0 0 24px rgba(237, 162, 58, 0.35);
+
+  /* Borders */
+  --border-hairline: 1px solid var(--border-subtle);
+  --border-card: 1px solid var(--border-default);
+  --border-deep: 1px solid var(--border-on-deep);
+
+  /* Glass (on deep surfaces only) */
+  --glass-bg: rgba(7, 42, 62, 0.55);
+  --glass-blur: blur(14px); /* @kind other */
+}
