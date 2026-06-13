@@ -244,15 +244,26 @@ textarea.ve-input { height: auto; min-height: 96px; padding: 12px 16px; resize: 
 .ve-marq:hover .ve-marq__t { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) { .ve-marq__t { animation: none; } }
 
-.navlink { transition: color .15s; }
+.navlink { transition: color .18s var(--ease-out); }
 .navlink:hover, .navlink.is-active { color: var(--ocean-600) !important; }
-.flink { transition: color .15s; }
+.flink { transition: color .15s, transform .15s var(--ease-out); }
 .flink:hover { color: var(--ocean-300) !important; }
 
 .site-header { position: sticky; top: 0; z-index: 90; }
 
 /* Nav bar */
-.navbar { background: #fff; border-bottom: 1px solid var(--border-default); }
+.navbar { background: #fff; border-bottom: 1px solid var(--border-default); transition: box-shadow .3s var(--ease-out), border-color .3s var(--ease-out); }
+.site-header.scrolled .navbar { box-shadow: 0 8px 28px rgba(7, 33, 47, .09); border-bottom-color: transparent; }
+
+/* Animated active/hover underline on desktop nav */
+.navbar__menu .navlink { position: relative; padding: 6px 0; }
+.navbar__menu .navlink::after {
+  content: ""; position: absolute; left: 0; right: 0; bottom: -3px; height: 2px;
+  background: var(--ocean-600); border-radius: 2px;
+  transform: scaleX(0); transform-origin: left; transition: transform .3s var(--ease-out);
+}
+.navbar__menu .navlink:hover::after,
+.navbar__menu .navlink.is-active::after { transform: scaleX(1); }
 .navbar__inner {
   max-width: var(--container-max); margin: 0 auto; padding: 15px 32px;
   display: flex; align-items: center; justify-content: space-between; gap: 24px;
@@ -381,4 +392,46 @@ textarea.ve-input { height: auto; min-height: 96px; padding: 12px 16px; resize: 
   .cat-grid, .stats-grid, .milestones-grid { grid-template-columns: 1fr !important; }
   .site-footer .footer-grid { grid-template-columns: 1fr !important; }
   .navbar__inner { padding: 13px 20px; }
+}
+
+/* --------------------------------------------------------------------------
+   7. REFINEMENTS — focus, micro-interactions, entrance stagger
+   -------------------------------------------------------------------------- */
+
+/* Consistent, on-brand keyboard focus for links/controls */
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--ocean-500);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Crisper text rendering on display headings */
+h1, h2, h3 { text-rendering: optimizeLegibility; -webkit-font-smoothing: antialiased; }
+
+/* "View all products →" inline link — animate the arrow on hover */
+a.navlink[href="products.html"] { transition: color .18s var(--ease-out); }
+a.navlink[href="products.html"]:hover { letter-spacing: .105em; }
+
+/* Footer links nudge on hover */
+.site-footer a.flink:hover { transform: translateX(3px); }
+
+/* Cert chips: gentle stagger feel via consistent easing already set */
+
+/* Staggered entrance for direct children of a revealed block */
+.reveal[data-stagger] > * { opacity: 0; transform: translateY(16px); }
+.reveal[data-stagger].is-in > * {
+  opacity: 1; transform: none;
+  transition: opacity .6s var(--ease-out), transform .6s var(--ease-out);
+}
+.reveal[data-stagger].is-in > *:nth-child(2) { transition-delay: .08s; }
+.reveal[data-stagger].is-in > *:nth-child(3) { transition-delay: .16s; }
+.reveal[data-stagger].is-in > *:nth-child(4) { transition-delay: .24s; }
+.reveal[data-stagger].is-in > *:nth-child(5) { transition-delay: .32s; }
+.reveal[data-stagger].is-in > *:nth-child(6) { transition-delay: .40s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal[data-stagger] > * { opacity: 1; transform: none; transition: none; }
 }

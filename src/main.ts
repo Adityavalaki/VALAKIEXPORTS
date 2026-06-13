@@ -93,6 +93,14 @@ function mountChrome(): void {
   });
   backdrop?.addEventListener("click", close);
   document.querySelectorAll(".mobile-drawer a").forEach((a) => a.addEventListener("click", close));
+
+  // refined sticky header: subtle shadow once scrolled
+  const header = document.querySelector(".site-header");
+  if (header) {
+    const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+  }
 }
 
 /* ==========================================================================
