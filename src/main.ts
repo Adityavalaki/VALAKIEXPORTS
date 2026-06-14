@@ -166,7 +166,12 @@ const fillStyle = (p: Product) =>
   `position:absolute;inset:0;background:linear-gradient(152deg, ${p.g1}, ${p.g2})`;
 const figureOf = (p: Product) => String(PRODUCTS.indexOf(p) + 1).padStart(2, "0");
 const esc = (s: string) =>
-  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
 function mountProducts(): void {
   const root = document.getElementById("products-app");
@@ -356,6 +361,24 @@ function mountContactForm(): void {
 }
 
 /* ==========================================================================
+   CERT IMAGE FALLBACK (replaces inline onerror so a strict CSP is possible)
+   ========================================================================== */
+
+function mountCertFallbacks(): void {
+  const imgs = document.querySelectorAll<HTMLImageElement>(".cert-frame__img img");
+  imgs.forEach((img) => {
+    const fail = () => {
+      img.style.display = "none";
+      const ph = img.nextElementSibling as HTMLElement | null;
+      if (ph) ph.style.display = "flex";
+    };
+    img.addEventListener("error", fail);
+    // handle images that already failed before this script ran
+    if (img.complete && img.naturalWidth === 0) fail();
+  });
+}
+
+/* ==========================================================================
    BOOT
    ========================================================================== */
 
@@ -365,6 +388,7 @@ const boot = () => {
   mountReveal();
   mountProducts();
   mountContactForm();
+  mountCertFallbacks();
 };
 
 if (document.readyState === "loading") {

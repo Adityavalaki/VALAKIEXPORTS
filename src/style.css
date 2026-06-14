@@ -375,7 +375,7 @@ textarea.ve-input { height: auto; min-height: 96px; padding: 12px 16px; resize: 
   max-width: var(--container-max); margin: 0 auto; padding-top: 24px;
   text-align: center;
 }
-.site-footer .footer-bottom span { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-on-dark-muted); }
+.site-footer .footer-bottom span { font-family: var(--font-body); font-size: 13px; letter-spacing: 0; text-transform: none; color: var(--text-on-dark-muted); }
 .site-footer .footer-credit { position: absolute; right: 0; top: 24px; }
 .site-footer .footer-credit a { color: var(--ocean-300); transition: color .15s var(--ease-out); }
 .site-footer .footer-credit a:hover { color: #fff; }
